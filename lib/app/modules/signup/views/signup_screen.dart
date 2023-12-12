@@ -96,7 +96,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                                 child: const Center(
                                   child: Text(
-                                    'Log In',
+                                    'Sign up free',
                                     style: TextStyle(
                                         fontSize: 24,
                                         color: Colors.black,

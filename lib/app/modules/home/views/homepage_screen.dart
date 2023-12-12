@@ -2,7 +2,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:music_spotify_app/app/modules/home/tabbar/views/artist_screen.dart';
+import 'package:music_spotify_app/app/routes/app_routes.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
 
 
@@ -213,7 +215,9 @@ class _HomePageScreenState extends State<HomePageScreen>
                                 children: [
                                   Positioned(
                                     child: GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        Get.toNamed(AppRouterName.MusicPage);
+                                      },
                                       child: Container(
                                         width: 130,
                                         height: 130,
@@ -282,7 +286,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                     //   borderRadius: BorderRadius.circular(80), // Điều chỉnh độ cong của indicator
                     //   color: Color(0XFFF42C83C), // Màu sắc của indicator
                     // ),
-                    indicator:const UnderlineTabIndicator(borderSide: BorderSide(width: 0.0),),
+                    indicator:const UnderlineTabIndicator(borderSide: BorderSide(width: 0.0,),),
                     
                   ),
                 ),

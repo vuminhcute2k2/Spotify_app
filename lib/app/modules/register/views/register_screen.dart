@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/instance_manager.dart';
+import 'package:music_spotify_app/app/modules/register/controller/register_controller.dart';
+import 'package:music_spotify_app/app/theme/text_field.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
 
 
@@ -11,20 +14,14 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  // late final  TextEditingController fullnameController;
-  // late final  TextEditingController emailRegisterController;
-  // late final  TextEditingController passwordRegisterController;
-  // late final  TextEditingController repeatPasswordController;
-  // String? fullnameValue;
-  // String? emailRegisterValue;
-  // String? passwordRegisterValue;
-  // String? repeatPasswordValue;
-  // String? emailError;
-  // String? passwordError;
-  // String? repeatPasswordError;
-  // String? fullnameError;
-  // bool _isloading = false;
-  // var _isObscured;
+  bool? isloading = false;
+  var isObscured;
+  RegisterController registerController = Get.put(RegisterController());
+  @override
+void initState() {
+  super.initState();
+  isObscured = true; // or false depending on your default state
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,32 +90,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Container(
                   child: Column(
                     children: [
-                      Container(
-                        margin: const EdgeInsets.only(left: 20, right: 20),
-                        child: TextField(
-                          onChanged: (value) {
-                            // emailRegisterValue = value;
-                          },
-                          // controller: emailRegisterController,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                            // errorText: emailError,
-                            //prefixIcon:const Icon(Icons.email),
-                            hintText: ' Full Name',
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.9)),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(color: Colors.white),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(color: Colors.white),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                        ),
+                      MyTextField(
+                        lable: 'Full Name',
+                        icons: Icons.abc,
+                        onChange: registerController.fullname,
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      MyTextField(
+                        lable: 'email',
+                        icons: Icons.email,
+                        onChange: registerController.email,
                       ),
                       const SizedBox(
                         height: 16,
@@ -126,41 +109,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Container(
                         margin: const EdgeInsets.only(left: 20, right: 20),
                         child: TextField(
-                          onChanged: (value) {
-                            // emailRegisterValue = value;
-                          },
-                          // controller: emailRegisterController,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                            // errorText: emailError,
-                            prefixIcon: Icon(Icons.email),
-                            hintText: 'Email',
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.9)),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(color: Colors.white),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(color: Colors.white),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(left: 20, right: 20),
-                        child: TextField(
-                          onChanged: (String value) {
-                            // passwordRegisterValue = value;
-                          },
-                          // obscureText: _isObscured,
-                          // controller: passwordRegisterController,
+                          // onChanged: (String value) {
+                          //   // passwordRegisterValue = value;
+                          // },
+                          obscureText: isObscured,
+                          controller: registerController.password,
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.lock),
                             // errorText: passwordError,
@@ -175,18 +128,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               borderRadius: BorderRadius.circular(24),
                               borderSide: const BorderSide(color: Colors.white),
                             ),
-                            // suffixIcon: IconButton(
-                            //   padding:
-                            //       const EdgeInsetsDirectional.only(end: 12.0),
-                            //   icon: _isObscured
-                            //       ? const Icon(Icons.visibility)
-                            //       : const Icon(Icons.visibility_off),
-                            //   onPressed: () {
-                            //     setState(() {
-                            //       _isObscured = !_isObscured;
-                            //     });
-                            //   },
-                            // ),
+                            suffixIcon: IconButton(
+                              padding:
+                                  const EdgeInsetsDirectional.only(end: 12.0),
+                              icon: isObscured
+                                  ? const Icon(Icons.visibility)
+                                  : const Icon(Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  isObscured = !isObscured;
+                                });
+                              },
+                            ),
                           ),
                           style: const TextStyle(color: Colors.white),
                           //obscureText: true,
@@ -197,11 +150,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Container(
                         margin: const EdgeInsets.only(left: 20, right: 20),
                         child: TextField(
-                          onChanged: (String value) {
-                            // passwordRegisterValue = value;
-                          },
-                          // obscureText: _isObscured,
-                          // controller: passwordRegisterController,
+                          // onChanged: (String value) {
+                          //   // passwordRegisterValue = value;
+                          // },
+                          obscureText: isObscured,
+                          controller: registerController.repeat,
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.lock),
                             // errorText: passwordError,
@@ -216,21 +169,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               borderRadius: BorderRadius.circular(24),
                               borderSide: const BorderSide(color: Colors.white),
                             ),
-                            // suffixIcon: IconButton(
-                            //   padding:
-                            //       const EdgeInsetsDirectional.only(end: 12.0),
-                            //   icon: _isObscured
-                            //       ? const Icon(Icons.visibility)
-                            //       : const Icon(Icons.visibility_off),
-                            //   onPressed: () {
-                            //     setState(() {
-                            //       _isObscured = !_isObscured;
-                            //     });
-                            //   },
-                            // ),
+                            suffixIcon: IconButton(
+                              padding:
+                                  const EdgeInsetsDirectional.only(end: 12.0),
+                              icon: isObscured
+                                  ? const Icon(Icons.visibility)
+                                  : const Icon(Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  isObscured = !isObscured;
+                                });
+                              },
+                            ),
                           ),
                           style: const TextStyle(color: Colors.white),
-                          //obscureText: true,
+                          // obscureText: true,
                           obscuringCharacter: '*',
                         ),
                       ),
@@ -256,6 +209,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       GestureDetector(
                         onTap: () {
                           // Navigator.pushNamed(context, AppRouterName.Continue);
+                          registerController.onRegister();
                         },
                         child: Container(
                           width: 350,

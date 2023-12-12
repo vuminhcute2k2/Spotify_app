@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:music_spotify_app/app/modules/login/controller/login_controller.dart';
 import 'package:music_spotify_app/app/routes/app_routes.dart';
+import 'package:music_spotify_app/app/theme/text_field.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
 
 
@@ -12,8 +15,7 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
-  late final TextEditingController emailController;
-  late final TextEditingController passwordController;
+  LoginController loginController =Get.put(LoginController());
   String? emailValue;
   String? passwordValue;
   String? emailError;
@@ -22,8 +24,7 @@ class _LogInScreenState extends State<LogInScreen> {
   var _isObscured;
   @override
   void initState() {
-    emailController = TextEditingController(text: emailValue);
-    passwordController = TextEditingController(text: passwordValue);
+    
     super.initState();
     _isObscured = true;
   }
@@ -32,8 +33,6 @@ class _LogInScreenState extends State<LogInScreen> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    emailController.dispose();
-    passwordController.dispose();
   }
 
   @override
@@ -108,32 +107,37 @@ class _LogInScreenState extends State<LogInScreen> {
                 Container(
                   child: Column(
                     children: [
-                      Container(
-                        margin: const EdgeInsets.only(left: 20, right: 20),
-                        child: TextField(
-                          onChanged: (value) {
-                            emailValue = value;
-                          },
-                          controller: emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                            errorText: emailError,
-                            prefixIcon: Icon(Icons.email),
-                            hintText: 'Email',
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.9)),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(color: Colors.white),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(color: Colors.white),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                        ),
+                      // Container(
+                      //   margin: const EdgeInsets.only(left: 20, right: 20),
+                      //   child: TextField(
+                      //     onChanged: (value) {
+                      //       emailValue = value;
+                      //     },
+                      //     controller: emailController,
+                      //     keyboardType: TextInputType.emailAddress,
+                      //     textInputAction: TextInputAction.next,
+                      //     decoration: InputDecoration(
+                      //       errorText: emailError,
+                      //       prefixIcon: Icon(Icons.email),
+                      //       hintText: 'Email',
+                      //       hintStyle:
+                      //           TextStyle(color: Colors.grey.withOpacity(0.9)),
+                      //       enabledBorder: OutlineInputBorder(
+                      //         borderRadius: BorderRadius.circular(24),
+                      //         borderSide: const BorderSide(color: Colors.white),
+                      //       ),
+                      //       focusedBorder: OutlineInputBorder(
+                      //         borderRadius: BorderRadius.circular(24),
+                      //         borderSide: const BorderSide(color: Colors.white),
+                      //       ),
+                      //     ),
+                      //     style: const TextStyle(color: Colors.white),
+                      //   ),
+                      // ),
+                      MyTextField(
+                        lable: "Email",
+                        icons: Icons.email,
+                        onChange: loginController.email,
                       ),
                       SizedBox(
                         height: 16,
@@ -145,7 +149,7 @@ class _LogInScreenState extends State<LogInScreen> {
                             passwordValue = value;
                           },
                           obscureText: _isObscured,
-                          controller: passwordController,
+                          controller: loginController.password,
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.lock),
                             errorText: passwordError,
@@ -199,7 +203,8 @@ class _LogInScreenState extends State<LogInScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, AppRouterName.NavigatorHome);
+                          loginController.onLogin();
+                          // Navigator.pushNamed(context, AppRouterName.NavigatorHome);
                         },
                         child: Container(
                           width: 350,
@@ -318,7 +323,8 @@ class _LogInScreenState extends State<LogInScreen> {
                           const Text("don't have an account? ",style: TextStyle(color: Colors.white),),
                           GestureDetector(
                             onTap: (){
-                              Navigator.pushNamed(context, AppRouterName.Register);
+                             // Navigator.pushNamed(context, AppRouterName.Register);
+                             Get.toNamed(AppRouterName.Register);
                             },
                             child:const Text('Register',style: TextStyle(color: Color(0XFFD7BD1E)),),
                           ),
