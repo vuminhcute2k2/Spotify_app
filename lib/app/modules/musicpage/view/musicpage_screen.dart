@@ -73,8 +73,12 @@ class _MusicPageScreenState extends State<MusicPageScreen> {
   }
 
   Future<void> _init() async {
-    await _audioPlayer.setLoopMode(LoopMode.all);
-    await _audioPlayer.setAudioSource(_playlist);
+    try {
+      await _audioPlayer.setLoopMode(LoopMode.all);
+      await _audioPlayer.setAudioSource(_playlist);
+    } catch (e) {
+      print('Error initializing audio player: $e');
+    }
   }
 
   @override
@@ -84,6 +88,15 @@ class _MusicPageScreenState extends State<MusicPageScreen> {
     super.dispose();
   }
 
+  //sử lý sự kiện replay 
+void _replayCurrentSong() {
+  // Dừng bài hát hiện tại
+    _audioPlayer.stop();
+    // Quay lại đầu bài hát
+    _audioPlayer.seek(Duration.zero);
+    // Phát lại bài hát
+    _audioPlayer.play();
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,7 +165,7 @@ class _MusicPageScreenState extends State<MusicPageScreen> {
                       );
                     }
                   }
-                  return SizedBox(); // Hoặc widget bạn muốn hiển thị khi có lỗi hoặc dữ liệu null
+                  return SizedBox(); 
                 },
               ),
               StreamBuilder<PositionData>(
@@ -173,7 +186,7 @@ class _MusicPageScreenState extends State<MusicPageScreen> {
                   );
                 },
               ),
-              Controls(audioPlayer: _audioPlayer),
+              Controls(audioPlayer: _audioPlayer,replayCallback: _replayCurrentSong,),
             ],
           ),
         ),
@@ -248,53 +261,68 @@ class Controls extends StatelessWidget {
   const Controls({
     super.key,
     required this.audioPlayer,
+    required this.replayCallback,
   });
   final AudioPlayer audioPlayer;
+  final VoidCallback replayCallback;
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        InkWell(
-          onTap: () {
-            audioPlayer.seekToPrevious();
-          },
-          child:  SvgPicture.asset(ImageConstant.imgVuesaxOutlinePrevious),
-        ),
-        StreamBuilder<PlayerState>(
-            stream: audioPlayer.playerStateStream,
-            builder: (context, snapshot) {
-              final playerState = snapshot.data;
-              final processingState = playerState?.processingState;
-              final playing = playerState?.playing;
-              if (!(playing ?? false)) {
-                return IconButton(
-                  onPressed: audioPlayer.play,
-                  icon: Icon(Icons.play_arrow_rounded),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal:40.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          InkWell(
+            onTap: replayCallback,
+            child:  SvgPicture.asset(ImageConstant.imgVuesaxOutlineRepeateOne),
+          ),
+          InkWell(
+            onTap: () {
+              audioPlayer.seekToPrevious();
+            },
+            child:  SvgPicture.asset(ImageConstant.imgVuesaxOutlinePrevious),
+          ),
+          StreamBuilder<PlayerState>(
+              stream: audioPlayer.playerStateStream,
+              builder: (context, snapshot) {
+                final playerState = snapshot.data;
+                final processingState = playerState?.processingState;
+                final playing = playerState?.playing;
+                if (!(playing ?? false)) {
+                  return IconButton(
+                    onPressed: audioPlayer.play,
+                    icon: Icon(Icons.play_arrow_rounded),
+                    color: Colors.white,
+                    iconSize: 80,
+                  );
+                } else if (processingState != ProcessingState.completed) {
+                  return IconButton(
+                    onPressed: audioPlayer.pause,
+                    icon: Icon(Icons.pause_rounded),
+                    color: Colors.white,
+                    iconSize: 80,
+                  );
+                }
+                return const Icon(
+                  Icons.play_arrow_rounded,
                   color: Colors.white,
-                  iconSize: 80,
+                  size: 80,
                 );
-              } else if (processingState != ProcessingState.completed) {
-                return IconButton(
-                  onPressed: audioPlayer.pause,
-                  icon: Icon(Icons.pause_rounded),
-                  color: Colors.white,
-                  iconSize: 80,
-                );
-              }
-              return const Icon(
-                Icons.play_arrow_rounded,
-                color: Colors.white,
-                size: 80,
-              );
-            }),
-        InkWell(
-          onTap: () {
-            audioPlayer.seekToNext();
-          },
-          child: SvgPicture.asset(ImageConstant.imgVuesaxOutlineNext),
-        ),
-      ],
+              }),
+          InkWell(
+            onTap: () {
+              audioPlayer.seekToNext();
+            },
+            child: SvgPicture.asset(ImageConstant.imgVuesaxOutlineNext),
+          ),
+          InkWell(
+            onTap: () {
+              audioPlayer.seek;
+            },
+            child:  SvgPicture.asset(ImageConstant.imgVuesaxOutlineShuffle),
+          ),
+        ],
+      ),
     );
   }
 }
