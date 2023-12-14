@@ -5,6 +5,7 @@ import 'package:music_spotify_app/app/modules/home/views/homepage_screen.dart';
 import 'package:music_spotify_app/app/modules/home/views/navigatorhome_screen.dart';
 import 'package:music_spotify_app/app/modules/login/views/login_screen.dart';
 import 'package:music_spotify_app/app/routes/app_routes.dart';
+import 'package:music_spotify_app/common/authentication.dart';
 
 class SpotifyScreen extends StatelessWidget {
   const SpotifyScreen({super.key});
@@ -34,6 +35,9 @@ class SpotifyScreen extends StatelessWidget {
           return const LogInScreen();
         },
       ),
+      initialBinding: BindingsBuilder(() {
+        Get.put(Auth());
+      }),
     );
   }
 }

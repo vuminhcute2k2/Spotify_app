@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/instance_manager.dart';
+import 'package:music_spotify_app/app/modules/login/controller/login_controller.dart';
 import 'package:music_spotify_app/app/modules/register/controller/register_controller.dart';
 import 'package:music_spotify_app/app/theme/text_field.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';

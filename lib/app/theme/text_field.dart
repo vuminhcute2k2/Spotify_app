@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
 class MyTextField extends StatelessWidget {
   final String lable;
   final IconData icons;
   final TextEditingController onChange;
+
   const MyTextField({super.key, required this.lable, required this.icons, required this.onChange});
 
   @override
@@ -18,7 +20,6 @@ class MyTextField extends StatelessWidget {
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
                           decoration: InputDecoration(
-                            // errorText: emailError,
                             prefixIcon:Icon(icons),
                             hintText: lable,
                             hintStyle:

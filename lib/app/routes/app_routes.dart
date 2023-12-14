@@ -63,6 +63,7 @@ import 'package:music_spotify_app/app/modules/musicpage/view/musicpage_screen.da
 import 'package:music_spotify_app/app/modules/register/views/register_screen.dart';
 import 'package:music_spotify_app/app/modules/signup/views/signup_screen.dart';
 import 'package:music_spotify_app/app/modules/splash/views/splash_screen.dart';
+import 'package:music_spotify_app/generated/widget_tree.dart';
 
 class AppRouter {
   static GetPageRoute? onGenerateRoute(RouteSettings settings) {
@@ -106,7 +107,12 @@ class AppRouter {
         return GetPageRoute(
           page: () => const MusicPageScreen(),
           settings: settings,
-        );  
+        );
+      case AppRouterName.WidgetTree:
+        return GetPageRoute(
+          page: () => const WidgetTree(),
+          settings: settings,
+        );     
     }
     return null;
   }
@@ -121,4 +127,5 @@ class AppRouterName {
   static const Register = "/register";
   static const NavigatorHome = '/navigatorHome';
   static const MusicPage ='/musicpage';
+  static const WidgetTree='/widgettree';
 }

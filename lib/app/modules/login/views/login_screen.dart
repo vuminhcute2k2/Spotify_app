@@ -24,9 +24,9 @@ class _LogInScreenState extends State<LogInScreen> {
   var _isObscured;
   @override
   void initState() {
-    
     super.initState();
     _isObscured = true;
+    loginController.initSharedPref();
   }
 
   @override
@@ -107,37 +107,10 @@ class _LogInScreenState extends State<LogInScreen> {
                 Container(
                   child: Column(
                     children: [
-                      // Container(
-                      //   margin: const EdgeInsets.only(left: 20, right: 20),
-                      //   child: TextField(
-                      //     onChanged: (value) {
-                      //       emailValue = value;
-                      //     },
-                      //     controller: emailController,
-                      //     keyboardType: TextInputType.emailAddress,
-                      //     textInputAction: TextInputAction.next,
-                      //     decoration: InputDecoration(
-                      //       errorText: emailError,
-                      //       prefixIcon: Icon(Icons.email),
-                      //       hintText: 'Email',
-                      //       hintStyle:
-                      //           TextStyle(color: Colors.grey.withOpacity(0.9)),
-                      //       enabledBorder: OutlineInputBorder(
-                      //         borderRadius: BorderRadius.circular(24),
-                      //         borderSide: const BorderSide(color: Colors.white),
-                      //       ),
-                      //       focusedBorder: OutlineInputBorder(
-                      //         borderRadius: BorderRadius.circular(24),
-                      //         borderSide: const BorderSide(color: Colors.white),
-                      //       ),
-                      //     ),
-                      //     style: const TextStyle(color: Colors.white),
-                      //   ),
-                      // ),
                       MyTextField(
                         lable: "Email",
                         icons: Icons.email,
-                        onChange: loginController.email,
+                        onChange: loginController.emailController,
                       ),
                       SizedBox(
                         height: 16,
@@ -149,10 +122,10 @@ class _LogInScreenState extends State<LogInScreen> {
                             passwordValue = value;
                           },
                           obscureText: _isObscured,
-                          controller: loginController.password,
+                          controller: loginController.passwordController,
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.lock),
-                            errorText: passwordError,
+                            //error: loginController.passwordError,
                             hintText: 'Password',
                             hintStyle:
                                 TextStyle(color: Colors.grey.withOpacity(0.9)),
@@ -203,7 +176,7 @@ class _LogInScreenState extends State<LogInScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          loginController.onLogin();
+                          loginController.loginUser();
                           // Navigator.pushNamed(context, AppRouterName.NavigatorHome);
                         },
                         child: Container(

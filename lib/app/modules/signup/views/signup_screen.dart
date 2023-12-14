@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:music_spotify_app/app/routes/app_routes.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
 
@@ -81,7 +82,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(context,AppRouterName.LogIn);
+                                // Navigator.pushNamed(context,AppRouterName.LogIn);
+                                Get.offNamed(AppRouterName.LogIn);
                               },
                               child: Container(
                                 width: 350,
