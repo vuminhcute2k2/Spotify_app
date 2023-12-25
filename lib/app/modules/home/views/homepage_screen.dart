@@ -1,13 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:music_spotify_app/app/modules/home/tabbar/views/artist_screen.dart';
+import 'package:music_spotify_app/app/modules/musicpage/view/musicpage_screen.dart';
 import 'package:music_spotify_app/app/routes/app_routes.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
-
-
+import 'package:music_spotify_app/app/modules/home/tabbar/views/artist_screen.dart';
+import 'package:music_spotify_app/app/modules/home/controller/home_controller.dart' ;
+import 'package:music_spotify_app/model/songs.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({super.key});
@@ -15,52 +17,28 @@ class HomePageScreen extends StatefulWidget {
   @override
   State<HomePageScreen> createState() => _HomePageScreenState();
 }
-
 class _HomePageScreenState extends State<HomePageScreen>
     with TickerProviderStateMixin {
-  final List<String> imagesCarousel = [
-    'https://cdn.tgdd.vn/Files/2021/08/11/1374600/lofi-la-gi-trao-luu-nhac-lofi-co-gi-dac-biet-top-2.jpg',
-    'https://cdn.tgdd.vn/Files/2021/08/11/1374600/lofi-la-gi-trao-luu-nhac-lofi-co-gi-dac-biet-top-2.jpg',
-    'https://cdn.tgdd.vn/Files/2021/08/11/1374600/lofi-la-gi-trao-luu-nhac-lofi-co-gi-dac-biet-top-2.jpg',
-  ];
-  final List<ListMusicHits> listTopHits = [
-    ListMusicHits(
-        imageTopHits:
-            'https://cdn.tgdd.vn/Files/2021/08/11/1374600/lofi-la-gi-trao-luu-nhac-lofi-co-gi-dac-biet-top-2.jpg',
-        nameSongs: 'Arti Untuk Cinta',
-        author: 'Arsy Widianto, Tiar Haram Zo'),
-    ListMusicHits(
-        imageTopHits:
-            'https://cdn.tgdd.vn/Files/2021/08/11/1374600/lofi-la-gi-trao-luu-nhac-lofi-co-gi-dac-biet-top-2.jpg',
-        nameSongs: 'Arti Untuk Cinta',
-        author: 'Arsy Widianto, Tiar...'),
-    ListMusicHits(
-        imageTopHits:
-            'https://cdn.tgdd.vn/Files/2021/08/11/1374600/lofi-la-gi-trao-luu-nhac-lofi-co-gi-dac-biet-top-2.jpg',
-        nameSongs: 'Arti Untuk Cinta',
-        author: 'Arsy Widianto, Tiar...'),
-    ListMusicHits(
-        imageTopHits:
-            'https://cdn.tgdd.vn/Files/2021/08/11/1374600/lofi-la-gi-trao-luu-nhac-lofi-co-gi-dac-biet-top-2.jpg',
-        nameSongs: 'Arti Untuk Cinta',
-        author: 'Arsy Widianto, Tiar...'),
-  ];
+  final HomeController homeController = Get.put(HomeController());
+  // final HomeController todayController= Get.put(HomeController());
   late TabController tabviewController;
   @override
   void initState() {
     super.initState();
     tabviewController = TabController(length: 4, vsync: this);
+    homeController.fetchCarouselImages();
+    homeController.fetchSongs();
   }
 
-  //sử lý sự kiện cho carousel
-  final CarouselController carouselController = CarouselController();
-  void scrollCarousel(bool scrollLeft) {
-    if (scrollLeft) {
-      carouselController.previousPage();
-    } else {
-      carouselController.nextPage();
-    }
-  }
+//   //sử lý sự kiện cho carousel
+//  // final CarouselController carouselController = CarouselController();
+//   void scrollCarousel(bool scrollLeft) {
+//     if (scrollLeft) {
+//       carouselController.previousPage();
+//     } else {
+//       carouselController.nextPage();
+//     }
+//   }
 
   @override
   Widget build(BuildContext context) {
@@ -107,37 +85,73 @@ class _HomePageScreenState extends State<HomePageScreen>
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Container(
                     width: double.infinity,
-                    height: 150,
+                    height: 200,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Stack(
                       children: [
                         Positioned.fill(
-                          child: CarouselSlider.builder(
-                            carouselController: carouselController,
-                            itemCount: imagesCarousel.length,
-                            itemBuilder: (BuildContext context, int index,
-                                int realIndex) {
-                              return Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                //width:double.infinity,
-                                //height: 900,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image:
-                                          NetworkImage(imagesCarousel[index]),
-                                      fit: BoxFit.cover),
-                                  borderRadius: BorderRadius.circular(30),
+                          child: Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            child: Column(
+                              children: [
+                                Obx(
+                                  () => Container(
+                                    width: double.infinity,
+                                    height: 150,
+                                    child: CarouselSlider(
+                                      items: homeController.carouselImages
+                                          .map(
+                                            (item) => Container(
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: NetworkImage(item),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                      options: CarouselOptions(
+                                        autoPlay: true,
+                                        enlargeCenterPage: true,
+                                        viewportFraction: 0.8,
+                                        enlargeStrategy:
+                                            CenterPageEnlargeStrategy.height,
+                                        onPageChanged:
+                                            (val, CarouselPageChangedReason) {
+                                          homeController.changeDotPosition(val);
+                                        },
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              );
-                            },
-                            options: CarouselOptions(
-                              autoPlay: true,
-                              enlargeCenterPage: true,
-                              aspectRatio: 16 / 9,
-                              enlargeStrategy: CenterPageEnlargeStrategy.height,
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Obx(
+                                  () => DotsIndicator(
+                                    dotsCount:
+                                        homeController.carouselImages.isEmpty
+                                            ? 1
+                                            : homeController
+                                                .carouselImages.length,
+                                    position: homeController.dotPosition.value,
+                                    decorator: DotsDecorator(
+                                      activeColor: Color(0XFF42C83C), // Màu sắc của chấm hiện tại
+                                      color: Colors
+                                          .grey, // Màu sắc của các chấm khác
+                                      spacing: EdgeInsets.all(2),
+                                      activeSize: Size(
+                                          8, 8), // Kích thước của chấm hiện tại
+                                      size: Size(
+                                          6, 6), // Kích thước của các chấm khác
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -146,7 +160,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                           left: 40,
                           child: InkWell(
                             onTap: () {
-                              scrollCarousel(true);
+                              //scrollCarousel(true);
                             },
                             child: Container(
                               padding: const EdgeInsets.all(10.0),
@@ -167,7 +181,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                           right: 40,
                           child: InkWell(
                             onTap: () {
-                              scrollCarousel(false);
+                              //scrollCarousel(false);
                             },
                             child: Container(
                               padding: const EdgeInsets.all(10.0),
@@ -201,10 +215,11 @@ class _HomePageScreenState extends State<HomePageScreen>
                     )),
                 Container(
                   height: 200,
-                  child: ListView.builder(
-                    itemCount: listTopHits.length,
+                  child:  ListView.builder(
+                    itemCount: homeController.songs.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (_, index) {
+                      final todayhit = homeController.songs[index];
                       return Container(
                         width: 130,
                         child: Column(
@@ -217,6 +232,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                                     child: GestureDetector(
                                       onTap: () {
                                         Get.toNamed(AppRouterName.MusicPage);
+                                        //Get.to(()=>MusicPageScreen())
                                       },
                                       child: Container(
                                         width: 130,
@@ -229,7 +245,8 @@ class _HomePageScreenState extends State<HomePageScreen>
                                           borderRadius:
                                               BorderRadius.circular(16),
                                           child: Image.network(
-                                            listTopHits[index].imageTopHits,
+                                            //listTopHits[index].imageTopHits,
+                                          todayhit['image'],
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -246,7 +263,8 @@ class _HomePageScreenState extends State<HomePageScreen>
                               ),
                             ),
                             Text(
-                              listTopHits[index].nameSongs,
+                              //listTopHits[index].nameSongs,
+                              todayhit['nameSong'],
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: const TextStyle(
@@ -255,7 +273,8 @@ class _HomePageScreenState extends State<HomePageScreen>
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              listTopHits[index].author,
+                              //listTopHits[index].author,
+                              todayhit['author'],
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: const TextStyle(
@@ -275,19 +294,58 @@ class _HomePageScreenState extends State<HomePageScreen>
                   //color: Colors.grey,
                   child: TabBar(
                     controller: tabviewController,
-                    labelColor:const Color(0XFFF42C83C) ,
+                    labelColor: const Color(0XFFF42C83C),
                     tabs: [
-                      Tab(child: Container(child:const Text('Artists',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),maxLines: 1,),),),
-                      Tab(child: Container(child:const Text('Album',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),maxLines: 1,),),),
-                      Tab(child: Container(child:const Text('Podcast',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),maxLines: 1,),),),
-                      Tab(child: Container(child:const Text('Genre',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),maxLines: 1,),),),
+                      Tab(
+                        child: Container(
+                          child: const Text(
+                            'Artists',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                          ),
+                        ),
+                      ),
+                      Tab(
+                        child: Container(
+                          child: const Text(
+                            'Album',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                          ),
+                        ),
+                      ),
+                      Tab(
+                        child: Container(
+                          child: const Text(
+                            'Podcast',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                          ),
+                        ),
+                      ),
+                      Tab(
+                        child: Container(
+                          child: const Text(
+                            'Genre',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                          ),
+                        ),
+                      ),
                     ],
                     // indicator: BoxDecoration(
                     //   borderRadius: BorderRadius.circular(80), // Điều chỉnh độ cong của indicator
                     //   color: Color(0XFFF42C83C), // Màu sắc của indicator
                     // ),
-                    indicator:const UnderlineTabIndicator(borderSide: BorderSide(width: 0.0,),),
-                    
+                    indicator: const UnderlineTabIndicator(
+                      borderSide: BorderSide(
+                        width: 0.0,
+                      ),
+                    ),
                   ),
                 ),
                 Container(
@@ -317,7 +375,9 @@ class _HomePageScreenState extends State<HomePageScreen>
                     ],
                   ),
                 ),
-                const SizedBox(height: 40,),
+                const SizedBox(
+                  height: 40,
+                ),
               ],
             ),
           ),

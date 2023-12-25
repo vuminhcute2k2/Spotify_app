@@ -53,6 +53,8 @@ void onRegister() async {
       email: email.text.trim(),
       fullname: fullname.text.trim(),
       password: password.text.trim(),
+      image: '',
+
     );
 
     // Lấy giá trị của biến error từ Auth controller

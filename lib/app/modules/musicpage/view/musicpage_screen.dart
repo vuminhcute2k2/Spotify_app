@@ -89,13 +89,13 @@ class _MusicPageScreenState extends State<MusicPageScreen> {
   }
 
   //sử lý sự kiện replay 
-void _replayCurrentSong() {
+void _replayCurrentSong() async{
   // Dừng bài hát hiện tại
-    _audioPlayer.stop();
+   await _audioPlayer.stop();
     // Quay lại đầu bài hát
-    _audioPlayer.seek(Duration.zero);
+   await _audioPlayer.seek(Duration.zero);
     // Phát lại bài hát
-    _audioPlayer.play();
+   await _audioPlayer.play();
 }
   @override
   Widget build(BuildContext context) {

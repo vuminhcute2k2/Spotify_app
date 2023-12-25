@@ -48,8 +48,10 @@ dependencies:
   rxdart: ^0.27.7
   shared_preferences: ^2.2.2
   firebase_storage: ^11.5.6
-  cloud_firestore: ^4.13.6
   permission_handler: ^11.1.0
+  dots_indicator: ^3.0.0
+  velocity_x: ^3.0.0
+  cloud_firestore: ^4.13.6
 
 dev_dependencies:
   flutter_test:

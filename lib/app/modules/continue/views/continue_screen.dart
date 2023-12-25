@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:music_spotify_app/app/routes/app_routes.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
 
@@ -19,7 +20,7 @@ class _ContinueScreenState extends State<ContinueScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      //backgroundColor: Colors.black,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -80,7 +81,7 @@ class _ContinueScreenState extends State<ContinueScreen> {
                           Text(
                             'Choose Mode',
                             style: TextStyle(
-                                color: Colors.white,
+                                //color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -90,7 +91,9 @@ class _ContinueScreenState extends State<ContinueScreen> {
                               Column(
                                 children: [
                                   InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Get.isDarkMode ? null:Get.changeTheme(ThemeData.dark());
+                                    },
                                     child: Container(
                                       padding: EdgeInsets.all(16.0),
                                       decoration: BoxDecoration(
@@ -109,15 +112,19 @@ class _ContinueScreenState extends State<ContinueScreen> {
                                     'Dark mode',
                                     style: TextStyle(
                                         color: Colors.white,
+                                        
                                         fontSize: 16,
                                         fontFamily: 'Montserrat'),
+                                   
                                   ),
                                 ],
                               ),
                               Column(
                                 children: [
                                   InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Get.isDarkMode ? Get.changeTheme(ThemeData.light()):null;
+                                    },
                                     child: Container(
                                       padding: EdgeInsets.all(16.0),
                                       decoration: BoxDecoration(

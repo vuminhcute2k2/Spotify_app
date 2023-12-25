@@ -25,6 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // });
     splashController.requestPermission();
     super.initState();
+    
   }
   @override
   Widget build(BuildContext context) {

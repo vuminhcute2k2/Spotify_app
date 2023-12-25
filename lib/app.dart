@@ -16,6 +16,8 @@ class SpotifyScreen extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: AppRouterName.Splash,
       onGenerateRoute:AppRouter.onGenerateRoute ,
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
       home: StreamBuilder(
         stream:FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot){
@@ -35,9 +37,9 @@ class SpotifyScreen extends StatelessWidget {
           return const LogInScreen();
         },
       ),
-      initialBinding: BindingsBuilder(() {
-        Get.put(Auth());
-      }),
+      // initialBinding: BindingsBuilder(() {
+      //   Get.put(Auth());
+      // }),
     );
   }
 }

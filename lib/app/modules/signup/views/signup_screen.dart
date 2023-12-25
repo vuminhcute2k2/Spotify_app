@@ -16,7 +16,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      //backgroundColor: Colors.black,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -35,7 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: Container(
                         padding: EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.black.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(80),
                         ),
                         child: Image.asset(
@@ -120,7 +120,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 margin:
                                     const EdgeInsets.only(left: 20, right: 20,top: 10),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0),
+                                  //color: Colors.white.withOpacity(0),
                                   borderRadius: BorderRadius.circular(80),
                                   border: Border.all(color: Colors.white),
                                 ),

@@ -14,7 +14,6 @@ import 'package:music_spotify_app/common/authentication.dart';
 // }
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   try {
     await Firebase.initializeApp();
     print('Firebase initialized successfully');

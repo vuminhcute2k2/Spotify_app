@@ -5,8 +5,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashController extends GetxController{
   SharedPreferences? prefs;
+  @override
+  void onInit() {
+    super.onInit();
+    requestPermission();
+  }
   void initSharedPref() async {
-    // Doi shared prefs nay phai khoi tao xong
+    
     prefs = await SharedPreferences.getInstance();
     final loginData = prefs?.getString("loginData");
     if(loginData==null){
@@ -22,17 +27,30 @@ class SplashController extends GetxController{
     //
   }
 
+  // Future<void> requestPermission() async {
+  //   Map<Permission, PermissionStatus> statuses = await [
+  //     Permission.storage,
+  //   ].request();
+  //   if (await Permission.storage.request().isGranted) {
+  //     initSharedPref();
+  //     // Future.delayed(const Duration(seconds: 1), () {
+  //     //   // Navigator.pushNamed(context,AppRouterName.WidgetTree);
+  //     //    Get.offNamed(AppRouterName.WidgetTree);
+  //     // });
+  //   }
+  // }
   Future<void> requestPermission() async {
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.storage,
-    ].request();
-    if (await Permission.storage.request().isGranted) {
+    final status = await Permission.storage.status;
+    if (status == PermissionStatus.granted) {
       initSharedPref();
-      Future.delayed(const Duration(seconds: 1), () {
-        // Navigator.pushNamed(context,AppRouterName.WidgetTree);
-         Get.offNamed(AppRouterName.WidgetTree);
-      });
-      //initSharedPref();
+    } else {
+      try {
+        await Permission.storage.request();
+        initSharedPref();
+      } catch (e) {
+        // Xử lý lỗi nếu cần
+        print("Error requesting storage permission: $e");
+      }
     }
   }
 }
