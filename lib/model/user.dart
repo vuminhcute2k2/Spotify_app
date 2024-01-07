@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class User {
   final String email;
+  final String about;
   final String uid;
   final String image;
   final String fullname;
@@ -10,6 +11,7 @@ class User {
 
   const User({
     required this.email,
+    required this.about,
     required this.uid,
     required this.image,
     required this.fullname,
@@ -20,7 +22,8 @@ class User {
 
   Map<String,dynamic> toJson() => {
     "email" : email,
-    "iamge" : image,
+    "image" : image,
+    "about" : about,
     "uid" : uid,
     "fullname" : fullname,
     "password" : password,

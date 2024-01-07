@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:music_spotify_app/app/modules/home/controller/profile_controller.dart';
 import 'package:music_spotify_app/app/modules/home/views/navigatorhome_screen.dart';
 import 'package:music_spotify_app/app/routes/app_routes.dart';
 import 'package:music_spotify_app/common/authentication.dart';
@@ -27,6 +28,7 @@ class LoginController extends GetxController {
         password: passwordController.text.trim(),
       );
       if (res == "success") {
+        updateUserData();
         Get.toNamed(AppRouterName.NavigatorHome);
       } else {
         // Hiển thị thông báo lỗi
@@ -42,38 +44,13 @@ class LoginController extends GetxController {
     } catch (e) {
       print("Error: $e");
     }
-
-    // validateInput();
+  }
+  // Hàm này để cập nhật trạng thái người dùng
+  void updateUserData() {
+    // Gọi hàm cập nhật người dùng trong ProfileController hoặc nơi bạn lưu trữ trạng thái người dùng
+    ProfileController profileController = Get.find();
+    profileController.loadUserData();
+   // profileController.update();
   }
 
-//   void validateInput() {
-//     if (emailController.text.length < 6 &&
-//         passwordController.text.length < 6 &&
-//         emailController.text.isNotEmpty &&
-//         passwordController.text.isNotEmpty) {
-//       emailError.value = "Email không được nhỏ hơn 6 ký tự";
-//       passwordError.value = "Password không được nhỏ hơn 6 kí tự";
-//     }
-
-//     if (emailController.text.length >= 6 &&
-//         passwordController.text.length >= 6) {
-//       emailError.value = null;
-//       passwordError.value = null;
-//       // Các giá trị khác bạn có thể set ở đây nếu cần
-//     }
-
-//     if (emailController.text.isEmpty) {
-//       emailError.value = "Email không được để rỗng";
-//     }
-
-//     if (passwordController.text.isEmpty) {
-//       passwordError.value = "Password không được để rỗng";
-//     }
-
-//     if (emailController.text.contains(" ") ||
-//         passwordController.text.contains(" ")) {
-//       emailError.value = "Email không được để dấu cách";
-//       passwordError.value = "Password không được để dấu cách";
-//     }
-//   }
 }

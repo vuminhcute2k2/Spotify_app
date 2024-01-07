@@ -232,6 +232,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                                     child: GestureDetector(
                                       onTap: () {
                                         Get.toNamed(AppRouterName.MusicPage);
+                                        // Get.to(() => MusicPageScreen(todayhit[index]));
                                         //Get.to(()=>MusicPageScreen())
                                       },
                                       child: Container(
@@ -348,7 +349,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                     ),
                   ),
                 ),
-                Container(
+                SizedBox(
                   height: 200,
                   child: TabBarView(
                     controller: tabviewController,

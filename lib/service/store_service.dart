@@ -9,4 +9,8 @@ class StoreServices {
   static getUser(String id) {
     return FirebaseFirestore.instance.collection('users').where('uid', isEqualTo: id).get();
   }
+  static getMusic(String id){
+    return FirebaseFirestore.instance.collection('today-songs').where('id', isEqualTo: id).get();
+
+  }
 }

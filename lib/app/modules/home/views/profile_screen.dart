@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
-import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -12,6 +12,7 @@ import 'package:music_spotify_app/app/routes/app_routes.dart';
 import 'package:music_spotify_app/common/authentication.dart';
 
 import 'package:music_spotify_app/generated/image_constants.dart';
+import 'package:music_spotify_app/service/store_service.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -45,6 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         author: 'RAN'),
   ];
   ProfileController profileController = Get.put(ProfileController());
+  Auth auth = Auth();
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -87,156 +89,107 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Container(
                   child: Column(
                     children: [
-                      // Obx(() => Container(
-                      //   width: 90,
-                      //   height: 90,
-                      //   child: ClipRRect(
-                      //     child: Image.network(
-                      //       'https://cdn-icons-png.flaticon.com/512/147/147142.png',
-                      //       fit: BoxFit.cover,
-                      //     ) ,
-                      //   ),
-                      // ),
-                      // ),
-                      GetBuilder<ProfileController>(
-                        builder: (controller) {
-                          return CircleAvatar(
-                            radius: 80,
-                            backgroundColor: Colors.white,
-                            child: Stack(
-                              children: [
-                                controller.imglink.isNotEmpty
-                                    ? Image.network(
-                                        controller.imglink,
-                                        fit: BoxFit.cover,
-                                      )
-                                        .box
-                                        .roundedFull
-                                        .clip(Clip.antiAlias)
-                                        .make()
-                                    : Image.network(
-                                        'https://cdn-icons-png.flaticon.com/512/147/147142.png',
-                                        fit: BoxFit.cover,
-                                      )
-                                        .box
-                                        .roundedFull
-                                        .clip(Clip.antiAlias)
-                                        .make(),
-                                Positioned(
-                                  right: 0,
-                                  bottom: 20,
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.blue,
-                                    child: Icon(
-                                      Icons.camera_alt_rounded,
-                                      color: Colors.white,
-                                    ).onTap(() {
-                                      Get.dialog(
-                                          pickerDialog(context, controller));
-                                    }),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      )
+                       Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(12.0),
+            child: FutureBuilder(
+              future: StoreServices.getUser(auth.currentUser!.uid),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Nếu dữ liệu đang được tải, hiển thị tiến trình chờ
+                  return const Center(
+                    child: CircularProgressIndicator(
+                        // valueColor: AlwaysStoppedAnimation(Colors.white),
+                        ),
+                  );
+                } else if (snapshot.hasError) {
+                  // Nếu có lỗi khi tải dữ liệu, hiển thị thông báo lỗi
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  // Nếu không có dữ liệu, hiển thị thông báo không có dữ liệu
+                  return const Center(
+                    child: Text('No data available'),
+                  );
+                } else {
+                  var data = snapshot.data!.docs[0].data();
+                  print("xin chao:${data}");
+                  if (data is Map && data.containsKey('image')) {
+                    var imageUrl = data['image'];
+                    print(currentUser!.uid);
 
-                      // Obx(() => CircleAvatar(
-                      //     radius: 80,
-                      //     backgroundColor: Colors.white,
-                      //     child: Stack(
-                      //       children: [
-                      //         //when imgpath is empty
-                      //         profileController.imgpath.isEmpty && data['image_url'] ==''
-                      //             ? Image.network(
-                      //       'https://cdn-icons-png.flaticon.com/512/147/147142.png',fit: BoxFit.cover, )
-                      //             //when imgpath is not empty means file is selected
-                      //             : profileController.imgpath.isNotEmpty ? Image.file(File(profileController.imgpath.value))
-                      //                 .box
-                      //                 .roundedFull
-                      //                 .clip(Clip.antiAlias)
-                      //                 .make():
-                      //                 //show network img form document
-                      //                 Image.network(data['image_url'],).box.roundedFull.clip(Clip.antiAlias).make(),
-                      //         Positioned(
-                      //           right: 0,
-                      //           bottom: 20,
-                      //           //show dialog on tap of this button
-                      //           child: CircleAvatar(
-                      //             backgroundColor:Colors.white,
-                      //             child: Icon(
-                      //               Icons.camera_alt_rounded,
-                      //               color: Colors.white,
-                      //               //using velocityX onTap here
-                      //             ).onTap(() {
-                      //               //using getx dialog and passing our widget
-                      //               //passing context and our controller to the widget
-                      //               Get.dialog(pickerDialog(context, profileController));
-                      //             }),
-                      //           ),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),),
-                      // Text(
-                      //   'Fauzian Ahmad',
-                      //   style: TextStyle(
-                      //       color: Colors.white,
-                      //       fontWeight: FontWeight.bold,
-                      //       fontSize: 20),
-                      // ),
-                      // Text(
-                      //   'fauzianahmad04@gmail.com',
-                      //   style: TextStyle(
-                      //       color: Colors.white,
-                      //       fontWeight: FontWeight.normal,
-                      //       fontSize: 14),
-                      // ),
-                      // Container(
-                      //   margin: const EdgeInsets.symmetric(
-                      //       horizontal: 100, vertical: 20),
-                      //   child: const Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //     children: [
-                      //       Column(
-                      //         children: [
-                      //           Padding(
-                      //             padding: EdgeInsets.only(bottom: 2),
-                      //             child: Text(
-                      //               'Followers',
-                      //               style: TextStyle(
-                      //                   color: Colors.white, fontSize: 12),
-                      //             ),
-                      //           ),
-                      //           Text(
-                      //             '129',
-                      //             style: TextStyle(
-                      //                 color: Colors.white,
-                      //                 fontSize: 20,
-                      //                 fontWeight: FontWeight.bold),
-                      //           )
-                      //         ],
-                      //       ),
-                      //       Column(
-                      //         children: [
-                      //           Text(
-                      //             'Following',
-                      //             style:
-                      //                 TextStyle(color: Colors.white, fontSize: 12),
-                      //           ),
-                      //           Text(
-                      //             '129',
-                      //             style: TextStyle(
-                      //                 color: Colors.white,
-                      //                 fontSize: 20,
-                      //                 fontWeight: FontWeight.bold),
-                      //           )
-                      //         ],
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
+                    return Column(
+                      children: [
+                        Obx(
+                          () => Column(
+                            children: [
+                              profileController.imgpath.isEmpty &&
+                                      data['image'] == ''
+                                  ? CircleAvatar(
+                                      radius: 60,
+                                      backgroundColor: null,
+                                      child: Image.network(
+                                        "https://i.pinimg.com/736x/ff/a0/9a/ffa09aec412db3f54deadf1b3781de2a.jpg",
+                                        //color: Colors.white,
+                                      )
+                                          .box
+                                          .roundedFull
+                                          .clip(Clip.antiAlias)
+                                          .make(),
+                                    )
+                                  //when imgpath is not empty means file is selected
+                                  : profileController.imgpath.isNotEmpty
+                                      ? Image.file(File(
+                                              profileController.imgpath.value))
+                                          .box
+                                          .roundedFull
+                                          .clip(Clip.antiAlias)
+                                          .make()
+                                      :
+                                      //show network img form document
+                                      CircleAvatar(
+                                          radius: 60,
+                                          backgroundColor: null,
+                                          child: Image.network(
+                                            data['image'],
+                                          )
+                                              .box
+                                              .roundedFull
+                                              .clip(Clip.antiAlias)
+                                              .make()),
+                              const SizedBox(height: 5,),               
+                              SizedBox(
+                                  child: Text(
+                                data['fullname'],
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                              SizedBox(
+                                child: Text(data['email'],style:const TextStyle(color: Colors.white,fontSize: 14),),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    // Trường 'image' không tồn tại trong dữ liệu hoặc data không phải là một Map.
+                    // Thực hiện xử lý tùy thuộc vào yêu cầu của bạn.
+                    return const Center(
+                      child: Text(
+                        'Image not available',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  }
+                }
+              },
+            ),
+          ),
                     ],
                   ),
                 ),
@@ -417,6 +370,8 @@ class ListMostlyPlayed {
 }
 
 Widget drawer() {
+  Auth auth = Auth();
+  ProfileController drawerController = Get.put(ProfileController());
   return Drawer(
     backgroundColor: Color(0XFF333333),
     shape: const RoundedRectangleBorder(
@@ -439,15 +394,102 @@ Widget drawer() {
           const SizedBox(
             height: 20,
           ),
-          CircleAvatar(
-            radius: 45,
-            backgroundColor: Colors.blue,
-            child: Image.asset(
-              "assets/images/img_adele.png",
+          Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(12.0),
+            child: FutureBuilder(
+              future: StoreServices.getUser(auth.currentUser!.uid),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Nếu dữ liệu đang được tải, hiển thị tiến trình chờ
+                  return const Center(
+                    child: CircularProgressIndicator(
+                        // valueColor: AlwaysStoppedAnimation(Colors.white),
+                        ),
+                  );
+                } else if (snapshot.hasError) {
+                  // Nếu có lỗi khi tải dữ liệu, hiển thị thông báo lỗi
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  // Nếu không có dữ liệu, hiển thị thông báo không có dữ liệu
+                  return const Center(
+                    child: Text('No data available'),
+                  );
+                } else {
+                  var data = snapshot.data!.docs[0].data();
+                  print("xin chao:${data}");
+                  if (data is Map && data.containsKey('image')) {
+                    var imageUrl = data['image'];
+                    print(currentUser!.uid);
+
+                    return Column(
+                      children: [
+                        Obx(
+                          () => Column(
+                            children: [
+                              drawerController.imgpath.isEmpty &&
+                                      data['image'] == ''
+                                  ? CircleAvatar(
+                                      radius: 60,
+                                      backgroundColor: null,
+                                      child: Image.network(
+                                        "https://i.pinimg.com/736x/ff/a0/9a/ffa09aec412db3f54deadf1b3781de2a.jpg",
+                                        //color: Colors.white,
+                                      )
+                                          .box
+                                          .roundedFull
+                                          .clip(Clip.antiAlias)
+                                          .make(),
+                                    )
+                                  //when imgpath is not empty means file is selected
+                                  : drawerController.imgpath.isNotEmpty
+                                      ? Image.file(File(
+                                              drawerController.imgpath.value))
+                                          .box
+                                          .roundedFull
+                                          .clip(Clip.antiAlias)
+                                          .make()
+                                      :
+                                      //show network img form document
+                                      CircleAvatar(
+                                          radius: 60,
+                                          backgroundColor: null,
+                                          child: Image.network(
+                                            data['image'],
+                                          )
+                                              .box
+                                              .roundedFull
+                                              .clip(Clip.antiAlias)
+                                              .make()),
+                              SizedBox(
+                                  child: Text(
+                                data['fullname'],
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    // Trường 'image' không tồn tại trong dữ liệu hoặc data không phải là một Map.
+                    // Thực hiện xử lý tùy thuộc vào yêu cầu của bạn.
+                    return const Center(
+                      child: Text(
+                        'Image not available',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  }
+                }
+              },
             ),
-            // child: Image.network(
-            //   HomeController.instance.userImage,fit: BoxFit.cover,
-            // ).box.roundedFull.clip(Clip.antiAlias).make(),
           ),
           const SizedBox(
             height: 10,
@@ -471,7 +513,7 @@ Widget drawer() {
                 onTap: () {
                   switch (index) {
                     case 0:
-                      Get.to(() => const EditAccountScreen(),
+                     Get.to(() => const EditAccountScreen(),
                           transition: Transition.downToUp);
                       break;
                     default:
@@ -506,6 +548,7 @@ Widget drawer() {
           ListTile(
             onTap: () async {
               await Auth().logout();
+              Get.delete<ProfileController>();
               Get.offAllNamed(AppRouterName.LogIn);
             },
             leading: const Icon(

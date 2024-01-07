@@ -55,6 +55,11 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["android.gradleStackBufferSize": "4096"]
+            }
+        }
     }
 
     buildTypes {

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:music_spotify_app/app/modules/musicpage/view/musicpage_screen.dart';
 
 class HomeController extends GetxController {
   var carouselImages = <String>[].obs;
@@ -57,6 +58,8 @@ class HomeController extends GetxController {
 
     // _songs.refresh();
   }
+
+  
 
   
 }
