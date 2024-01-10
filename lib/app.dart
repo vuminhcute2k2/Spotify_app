@@ -14,7 +14,7 @@ class SpotifyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MusicPageController musicPageController = MusicPageController();
+    Get.put(MusicPageController());
 
     return  GetMaterialApp(
       debugShowCheckedModeBanner: false,

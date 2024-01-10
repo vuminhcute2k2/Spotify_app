@@ -104,11 +104,11 @@ class AppRouter {
           page: () => const NavigatorHomeScreen(),
           settings: settings,
         );
-      case AppRouterName.MusicPage:
-        return GetPageRoute(
-          page: () =>  MusicPageScreen(),
-          settings: settings,
-        );
+      // case AppRouterName.MusicPage:
+      //   return GetPageRoute(
+      //     page: () =>  MusicPageScreen(),
+      //     settings: settings,
+      //   );
       case AppRouterName.Profile:
         return GetPageRoute(
           page: () => const ProfileScreen(),

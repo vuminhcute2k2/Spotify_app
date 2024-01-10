@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:music_spotify_app/app/modules/musicpage/view/musicpage_screen.dart';
-
+import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
 class HomeController extends GetxController {
   var carouselImages = <String>[].obs;
   var dotPosition = 0.obs;
@@ -9,7 +9,6 @@ class HomeController extends GetxController {
   final RxList<Map<String, dynamic>> _songs = <Map<String, dynamic>>[].obs;
 
   List<Map<String, dynamic>> get songs => _songs;
-
   @override
   void onInit() {
     fetchCarouselImages(); // Gọi phương thức này khi controller được khởi tạo

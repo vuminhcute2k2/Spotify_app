@@ -4,6 +4,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
 import 'package:music_spotify_app/app/modules/musicpage/view/musicpage_screen.dart';
 import 'package:music_spotify_app/app/routes/app_routes.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
@@ -21,6 +22,8 @@ class HomePageScreen extends StatefulWidget {
 class _HomePageScreenState extends State<HomePageScreen>
     with TickerProviderStateMixin {
   final HomeController homeController = Get.put(HomeController());
+
+ final MusicPageController musicController = Get.put(MusicPageController());
   // final HomeController todayController= Get.put(HomeController());
   late TabController tabviewController;
   @override
@@ -221,89 +224,75 @@ class _HomePageScreenState extends State<HomePageScreen>
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (_, index) {
                       final todayhit = homeController.songs[index];
-                      return GestureDetector(
-                        onTap: () async {
-                          // // Lấy thông tin chi tiết của bài hát từ Firebase
-                          // Map<String, dynamic> songDetails =
-                          //     await homeController
-                          //         .getSongDetails(todayhit['id']);
 
-                          // // Kiểm tra xem có thông tin chi tiết hay không
-                          // if (songDetails.isNotEmpty) {
-                          //   // Chuyển sang màn hình MusicPageScreen và truyền thông tin chi tiết
-                          //   Get.to(
-                          //       () => MusicPageScreen(songData: songDetails));
-                          // } else {
-                          //   // Xử lý trường hợp không lấy được thông tin chi tiết
-                          //   print("Error: Unable to fetch song details");
-                          // }
-                        },
-                        child: Container(
-                          width: 130,
-                          child: Column(
-                            children: [
-                              Container(
-                                margin:
-                                    const EdgeInsets.only(right: 10, left: 2),
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                         Get.toNamed(AppRouterName.MusicPage);
-                                          // Get.to(() => MusicPageScreen(todayhit[index]));
-                                          //Get.to(()=>MusicPageScreen())
-                                        },
-                                        child: Container(
-                                          width: 130,
-                                          height: 130,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                            child: Image.network(
-                                              //listTopHits[index].imageTopHits,
-                                              todayhit['image'],
-                                              fit: BoxFit.cover,
-                                            ),
+                      return Container(
+                        width: 130,
+                        child: Column(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(right: 10, left: 2),
+                              child: Stack(
+                                children: [
+                                  Positioned(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        //  Map<String, dynamic> selectedSong =  Get.find<MusicPageController>().updateSelectedSong(selectedSong);
+                                       // Get.to(() => MusicPageScreen(songData: todayhit));
+                                        musicController.updateSelectedSong(todayhit);
+                                        Get.to(() => MusicPageScreen(songData:todayhit));
+                                        //Get.toNamed(AppRouterName.MusicPage);
+                                        // Get.to(() => MusicPageScreen(todayhit[index]));
+                                        //Get.to(()=>MusicPageScreen())
+                                      },
+                                      child: Container(
+                                        width: 130,
+                                        height: 130,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                          child: Image.network(
+                                            //listTopHits[index].imageTopHits,
+                                            todayhit['image'],
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
                                       ),
                                     ),
-                                    Positioned(
-                                      bottom: 10,
-                                      right: 10,
-                                      child: SvgPicture.asset(
-                                          ImageConstant.imgIcPlayTopHits),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  Positioned(
+                                    bottom: 10,
+                                    right: 10,
+                                    child: SvgPicture.asset(
+                                        ImageConstant.imgIcPlayTopHits),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                //listTopHits[index].nameSongs,
-                                todayhit['nameSong'],
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                //listTopHits[index].author,
-                                todayhit['author'],
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ],
-                          ),
+                            ),
+                            Text(
+                              //listTopHits[index].nameSongs,
+                              todayhit['nameSong'],
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              //listTopHits[index].author,
+                              todayhit['author'],
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
                         ),
                       );
                     },

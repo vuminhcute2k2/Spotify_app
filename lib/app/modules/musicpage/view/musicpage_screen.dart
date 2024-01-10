@@ -12,13 +12,21 @@ import 'package:music_spotify_app/generated/image_constants.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MusicPageScreen extends StatelessWidget {
-  final MusicPageController musicPageController =
-      Get.put(MusicPageController());
+  final Map<String, dynamic> songData;
+
+  MusicPageScreen({required this.songData});
+  // final MusicPageController musicPageController =
+  //     Get.put(MusicPageController());
+  final MusicPageController musicPageController = Get.find<MusicPageController>();
 
   @override
   Widget build(BuildContext context) {
+     final controller = Get.find<MusicPageController>();
+     print('Updating UI with: ${controller.currentSong}');
     return GetBuilder<MusicPageController>(
       builder: (controller) {
+        controller.updateSelectedSong(songData);
+        controller.replayCurrentSong();
         return Scaffold(
           backgroundColor: Colors.grey[900],
           body: SafeArea(
@@ -79,12 +87,17 @@ class MusicPageScreen extends StatelessWidget {
                           if (songs.isEmpty) {
                             return CircularProgressIndicator();
                           }
-                          final Map<String, dynamic> selectedSong = songs[0];
-                          return MediaMetaData(
-                            imageUrl: selectedSong["image"],
-                            title: selectedSong["nameSong"],
-                            artist: selectedSong["author"] ?? '',
-                            musicSongs: selectedSong["song"],
+                          // return MediaMetaData(
+                          //   imageUrl: songData["image"],
+                          //   title: songData["nameSong"],
+                          //   artist: songData["author"] ?? '',
+                          //   musicSongs: songData["song"],
+                          // );
+                           return MediaMetaData(
+                            imageUrl: controller.currentSong['image'],
+                            title: controller.currentSong["nameSong"],
+                            artist: controller.currentSong["author"] ?? '',
+                            musicSongs: controller.currentSong["song"],
                           );
                         },
                       );
@@ -199,9 +212,11 @@ class Controls extends StatelessWidget {
     super.key,
     required this.audioPlayer,
     required this.replayCallback,
+
   });
   final AudioPlayer audioPlayer;
   final VoidCallback replayCallback;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
