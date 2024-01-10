@@ -8,7 +8,7 @@ import 'package:music_spotify_app/app/modules/musicpage/view/musicpage_screen.da
 import 'package:music_spotify_app/app/routes/app_routes.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
 import 'package:music_spotify_app/app/modules/home/tabbar/views/artist_screen.dart';
-import 'package:music_spotify_app/app/modules/home/controller/home_controller.dart' ;
+import 'package:music_spotify_app/app/modules/home/controller/home_controller.dart';
 import 'package:music_spotify_app/model/songs.dart';
 
 class HomePageScreen extends StatefulWidget {
@@ -17,6 +17,7 @@ class HomePageScreen extends StatefulWidget {
   @override
   State<HomePageScreen> createState() => _HomePageScreenState();
 }
+
 class _HomePageScreenState extends State<HomePageScreen>
     with TickerProviderStateMixin {
   final HomeController homeController = Get.put(HomeController());
@@ -133,14 +134,14 @@ class _HomePageScreenState extends State<HomePageScreen>
                                 ),
                                 Obx(
                                   () => DotsIndicator(
-                                    dotsCount:
-                                        homeController.carouselImages.isEmpty
-                                            ? 1
-                                            : homeController
-                                                .carouselImages.length,
+                                    dotsCount: homeController
+                                            .carouselImages.isEmpty
+                                        ? 1
+                                        : homeController.carouselImages.length,
                                     position: homeController.dotPosition.value,
                                     decorator: DotsDecorator(
-                                      activeColor: Color(0XFF42C83C), // Màu sắc của chấm hiện tại
+                                      activeColor: Color(
+                                          0XFF42C83C), // Màu sắc của chấm hiện tại
                                       color: Colors
                                           .grey, // Màu sắc của các chấm khác
                                       spacing: EdgeInsets.all(2),
@@ -215,75 +216,94 @@ class _HomePageScreenState extends State<HomePageScreen>
                     )),
                 Container(
                   height: 200,
-                  child:  ListView.builder(
+                  child: ListView.builder(
                     itemCount: homeController.songs.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (_, index) {
                       final todayhit = homeController.songs[index];
-                      return Container(
-                        width: 130,
-                        child: Column(
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(right: 10, left: 2),
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Get.toNamed(AppRouterName.MusicPage);
-                                        // Get.to(() => MusicPageScreen(todayhit[index]));
-                                        //Get.to(()=>MusicPageScreen())
-                                      },
-                                      child: Container(
-                                        width: 130,
-                                        height: 130,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(16),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(16),
-                                          child: Image.network(
-                                            //listTopHits[index].imageTopHits,
-                                          todayhit['image'],
-                                            fit: BoxFit.cover,
+                      return GestureDetector(
+                        onTap: () async {
+                          // // Lấy thông tin chi tiết của bài hát từ Firebase
+                          // Map<String, dynamic> songDetails =
+                          //     await homeController
+                          //         .getSongDetails(todayhit['id']);
+
+                          // // Kiểm tra xem có thông tin chi tiết hay không
+                          // if (songDetails.isNotEmpty) {
+                          //   // Chuyển sang màn hình MusicPageScreen và truyền thông tin chi tiết
+                          //   Get.to(
+                          //       () => MusicPageScreen(songData: songDetails));
+                          // } else {
+                          //   // Xử lý trường hợp không lấy được thông tin chi tiết
+                          //   print("Error: Unable to fetch song details");
+                          // }
+                        },
+                        child: Container(
+                          width: 130,
+                          child: Column(
+                            children: [
+                              Container(
+                                margin:
+                                    const EdgeInsets.only(right: 10, left: 2),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                         Get.toNamed(AppRouterName.MusicPage);
+                                          // Get.to(() => MusicPageScreen(todayhit[index]));
+                                          //Get.to(()=>MusicPageScreen())
+                                        },
+                                        child: Container(
+                                          width: 130,
+                                          height: 130,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            child: Image.network(
+                                              //listTopHits[index].imageTopHits,
+                                              todayhit['image'],
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Positioned(
-                                    bottom: 10,
-                                    right: 10,
-                                    child: SvgPicture.asset(
-                                        ImageConstant.imgIcPlayTopHits),
-                                  ),
-                                ],
+                                    Positioned(
+                                      bottom: 10,
+                                      right: 10,
+                                      child: SvgPicture.asset(
+                                          ImageConstant.imgIcPlayTopHits),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Text(
-                              //listTopHits[index].nameSongs,
-                              todayhit['nameSong'],
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              //listTopHits[index].author,
-                              todayhit['author'],
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                          ],
+                              Text(
+                                //listTopHits[index].nameSongs,
+                                todayhit['nameSong'],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                //listTopHits[index].author,
+                                todayhit['author'],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

@@ -4,6 +4,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_spotify_app/app/modules/musicpage/view/musicpage_screen.dart';
 import 'package:rxdart/rxdart.dart' as rx;
+import 'package:velocity_x/velocity_x.dart';
 
 class MusicPageController extends GetxController {
   final RxList<Map<String, dynamic>> _songs = <Map<String, dynamic>>[].obs;
@@ -13,14 +14,11 @@ class MusicPageController extends GetxController {
     // Add your AudioSource objects to the playlist here
   ]);
   //map chứa dữ liệu của songs
-  late final Rx<Map<String, dynamic>> selectedSong =
-      Rx<Map<String, dynamic>>({});
-
+  late final Rx<Map<String, dynamic>> selectedSong = Rx<Map<String, dynamic>>({});
   Stream<Duration> get positionStream => audioPlayer.positionStream;
   Stream<Duration> get bufferedPositionStream =>
       audioPlayer.bufferedPositionStream;
   Stream<Duration?> get durationStream => audioPlayer.durationStream;
-
   Stream<SequenceState?> get sequenceStateStream =>
       audioPlayer.sequenceStateStream;
   Stream<PositionData> get positionDataStream =>
@@ -37,8 +35,12 @@ class MusicPageController extends GetxController {
     audioPlayer = AudioPlayer();
     _init();
     musicSongs();
-    replayCurrentSong();
-    //updateSelectedSong();
+    if (songs.isNotEmpty) {
+    updateSelectedSong(songs.first);
+  }else{
+    print('không nhận đc giá trị');
+  }
+  replayCurrentSong();
   }
 
   // Hàm để cập nhật bài hát được chọn
@@ -48,8 +50,14 @@ class MusicPageController extends GetxController {
       val['nameSong'] = song['nameSong'];
       val['author'] = song['author'];
       val['song'] = song['song'];
+     
     });
   }
+  // Đoạn mã để cập nhật selectedSong khi chọn một bài hát mới
+// void selectSong(Map<String, dynamic> song) {
+//   updateSelectedSong(song);
+//   // Các xử lý khác khi chọn một bài hát mới
+// }
 
   Future<void> _init() async {
     try {
@@ -78,123 +86,46 @@ Future<void> musicSongs() async {
   try {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     QuerySnapshot qn = await _firestore.collection("today-songs").get();
-
+    print(qn.docs);
     final List<AudioSource> songs = qn.docs.map((doc) {
       return AudioSource.uri(
         Uri.parse(doc["song"]),
         tag: MediaItem(
-          id: doc["id"],
+          id: doc["song"],
           title: doc["nameSong"],
           artist: doc["author"],
           artUri: Uri.parse(doc["image"]),
         ),
       );
     }).toList();
-
-    // Create a new ConcatenatingAudioSource with the new list of songs
+    //  print("SỐ ${songs.elementAt(1).} audio sources.");
+    _songs.assignAll(
+        qn.docs.map(
+          (doc) => {
+            "nameSong": doc["nameSong"],
+            "song": doc["song"],
+            "id":doc["id"],
+            "image": doc["image"],
+            "author": doc["author"],
+          },
+        ),
+      );
+     
+    // add mp3 vào newplaylist để chạy nhạc 
     final newPlaylist = ConcatenatingAudioSource(children: songs);
-    
+    print('Playlist ${newPlaylist}');
     // Set the new playlist to the audioPlayer
     await audioPlayer.setAudioSource(newPlaylist);
+    // Nếu có bài hát, cập nhật selectedSong với bài hát đầu tiên
+   
 
   } catch (e) {
     print("Error fetching Songs: $e");
   }
 }
-//   Future<void> musicSongs() async {
-//   try {
-//     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-//     QuerySnapshot qn = await _firestore.collection("today-songs").get();
 
-//     final List<AudioSource> songs = qn.docs.map((doc) {
-//       return AudioSource.uri(
-//         Uri.parse(doc["song"]),
-//         tag: MediaItem(
-//           id: doc["id"],
-//           title: doc["nameSong"],
-//           artist: doc["author"],
-//           artUri: Uri.parse(doc["image"]),
-//         ),
-//       );
-//     }).toList();
-
-//     _playlist.add(songs as AudioSource);
-//   } catch (e) {
-//     print("Error fetching Songs: $e");
-//   }
-// }
 }
 
 
 
 
-//   final Rx<AudioPlayer> _audioPlayer = AudioPlayer().obs;
-//   final Rx<ConcatenatingAudioSource> _playlist =
-//       ConcatenatingAudioSource(children: []).obs;
-
-//   AudioPlayer get audioPlayer => _audioPlayer.value;
-//   ConcatenatingAudioSource get playlist => _playlist.value;
-
-//   @override
-//   void onInit() {
-//     // Khởi tạo controller
-//     _init();
-//     // Lấy danh sách bài hát từ Firestore
-//     _fetchSongsFromFirestore();
-//     super.onInit();
-//   }
-
-//   Future<void> _init() async {
-//     try {
-//       await audioPlayer.setLoopMode(LoopMode.all);
-//       await audioPlayer.setAudioSource(playlist);
-//     } catch (e) {
-//       print('Error initializing audio player: $e');
-//     }
-//   }
-
-//   Future<void> _fetchSongsFromFirestore() async {
-//     try {
-//     final QuerySnapshot<Map<String, dynamic>> snapshot =
-//         await FirebaseFirestore.instance.collection("today-songs").get();
-//     final songs = snapshot.docs.map((doc) {
-//       final data = doc.data();
-//       return AudioSource.uri(
-//         Uri.parse(data["song"]),
-//         tag: MediaItem(
-//           id: data["id"],
-//           title: data["nameSong"],
-//           artist: data["author"],
-//           artUri: Uri.parse(data["image"]),
-//         ),
-//       );
-//     }).toList();
-//     // Xóa danh sách phát hiện tại và thêm danh sách mới
-//     _playlist.value = ConcatenatingAudioSource(children: songs);
-//   } catch (e) {
-//     print("Error fetching songs from Firestore: $e");
-//   }
-//   }
-
-//   // Thêm bài hát vào danh sách phát
-//  void addSongToPlaylist(MediaItem mediaItem) {
-//   playlist.add(
-//     AudioSource.uri(
-//       Uri.parse(mediaItem.id!),
-//       tag: mediaItem,
-//       uri: Uri.parse(mediaItem.artUri.toString()),
-//     ),
-//   );
-// }
-
-//   // Xóa toàn bộ danh sách phát
-//   void clearPlaylist() {
-//     playlist.clear();
-//   }
-
-//   // Xử lý sự kiện replay
-//   Future<void> replayCurrentSong() async {
-//     await audioPlayer.stop();
-//     await audioPlayer.seek(Duration.zero);
-//     await audioPlayer.play();
-//   }

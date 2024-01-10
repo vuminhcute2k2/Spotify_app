@@ -59,7 +59,26 @@ class HomeController extends GetxController {
     // _songs.refresh();
   }
 
-  
+
+  // Thêm hàm để lấy dữ liệu chi tiết của một bài hát từ Firebase
+  // Future<Map<String, dynamic>> getSongDetails(String songId) async {
+  //   try {
+  //     DocumentSnapshot songSnapshot = await FirebaseFirestore.instance
+  //         .collection("today-hits")
+  //         .doc(songId)
+  //         .get();
+
+  //     if (songSnapshot.exists) {
+  //       return songSnapshot.data() as Map<String, dynamic>;
+  //     } else {
+  //       // Xử lý trường hợp bài hát không tồn tại
+  //       return {};
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching song details: $e");
+  //     return {};
+  //   }
+  // }
+}
 
   
-}

@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -71,13 +72,12 @@ class MusicPageScreen extends StatelessWidget {
                   StreamBuilder<SequenceState?>(
                     stream: controller.sequenceStateStream,
                     builder: (context, snapshot) {
+                      // print('heloo ${snapshot.data}');
                       return Obx(
                         () {
-                          final List<Map<String, dynamic>> songs =
-                              controller.songs;
+                          final List songs = controller.songs;
                           if (songs.isEmpty) {
                             return CircularProgressIndicator();
-
                           }
                           final Map<String, dynamic> selectedSong = songs[0];
                           return MediaMetaData(
@@ -86,12 +86,12 @@ class MusicPageScreen extends StatelessWidget {
                             artist: selectedSong["author"] ?? '',
                             musicSongs: selectedSong["song"],
                           );
-                          
                         },
-                        
                       );
                     },
                   ),
+                 
+
                   StreamBuilder<PositionData>(
                     stream: controller.positionDataStream,
                     builder: (context, snapshot) {

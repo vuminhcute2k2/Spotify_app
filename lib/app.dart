@@ -5,6 +5,7 @@ import 'package:music_spotify_app/app/modules/home/controller/profile_controller
 import 'package:music_spotify_app/app/modules/home/views/homepage_screen.dart';
 import 'package:music_spotify_app/app/modules/home/views/navigatorhome_screen.dart';
 import 'package:music_spotify_app/app/modules/login/views/login_screen.dart';
+import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
 import 'package:music_spotify_app/app/routes/app_routes.dart';
 import 'package:music_spotify_app/common/authentication.dart';
 
@@ -13,6 +14,8 @@ class SpotifyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final MusicPageController musicPageController = MusicPageController();
+
     return  GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: AppRouterName.Splash,
