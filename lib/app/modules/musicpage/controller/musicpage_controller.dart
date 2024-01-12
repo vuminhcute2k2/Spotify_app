@@ -72,7 +72,7 @@ class MusicPageController extends GetxController {
   // }
 
   void updateSelectedSong(Map<String, dynamic> song) async {
-    currentSong.value = RxMap<String, dynamic>.from(song);
+    selectedSong.value = RxMap<String, dynamic>.from(song);
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     QuerySnapshot qn = await _firestore.collection("today-songs").get();
     for (QueryDocumentSnapshot doc in qn.docs) {
@@ -105,20 +105,26 @@ class MusicPageController extends GetxController {
         },
       ),
     );
+    //biến giám sát index
+    int indexOfSelectedSong = songs.indexWhere((source) {
+      // Kiểm tra xem source có phải là UriAudioSource không
+      if (source is UriAudioSource) {
+        // Kiểm tra xem giá trị song của bài hát có khớp với Uri không
+        return Uri.parse(song['song']) == source.uri;
+      }
+      return false;
+    });
     audioPlayer.sequenceState;
     print('Index Hiện tại: ${audioPlayer.currentIndex}');
     print('Đang Phát: ${audioPlayer.playing}');
     print('Vị trí: ${audioPlayer.position}');
     final newPlaylist = ConcatenatingAudioSource(
       children: songs,
-      useLazyPreparation: true,
     );
     await audioPlayer.setAudioSource(newPlaylist,
-        initialIndex: 0, initialPosition: Duration.zero);
+        initialIndex: indexOfSelectedSong, initialPosition: Duration.zero);
     // await audioPlayer.seek(Duration.zero, index: );
   }
-
-
 
   // Đoạn mã để cập nhật selectedSong khi chọn một bài hát mới
   void onSongSelected(Map<String, dynamic> song) {
@@ -200,6 +206,7 @@ class MusicPageController extends GetxController {
     }
   }
 }
+
 class CustomAudioSource {
   final Uri uri;
   final Map<String, dynamic> metadata;
@@ -209,4 +216,3 @@ class CustomAudioSource {
     required this.metadata,
   });
 }
-
