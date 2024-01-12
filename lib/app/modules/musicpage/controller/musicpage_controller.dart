@@ -14,15 +14,18 @@ class MusicPageController extends GetxController {
   late AudioPlayer audioPlayer;
   final _playlist = ConcatenatingAudioSource(children: []);
   //map chứa dữ liệu của songs
-  late final Rx<Map<String, dynamic>> selectedSong = Rx<Map<String, dynamic>>({});
+  late final Rx<Map<String, dynamic>> selectedSong =
+      Rx<Map<String, dynamic>>({});
+  RxList _products = [].obs;
   RxMap currentSong = {}.obs;
-  //biến theo dõi bài hát
-  int currentSongIndex = 0;
-
+  //biểu thị thời gian hiện tại của âm thanh
   Stream<Duration> get positionStream => audioPlayer.positionStream;
+  //biểu thị thời gian đệm (đoạn load mờ hơn phía sau)
   Stream<Duration> get bufferedPositionStream =>
       audioPlayer.bufferedPositionStream;
+  //biểu thị thời gian tổng
   Stream<Duration?> get durationStream => audioPlayer.durationStream;
+  //biểu thị trạng thái của trình phát liên tục
   Stream<SequenceState?> get sequenceStateStream =>
       audioPlayer.sequenceStateStream;
   Stream<PositionData> get positionDataStream =>
@@ -67,42 +70,55 @@ class MusicPageController extends GetxController {
   //   // Điều này phụ thuộc vào cách bạn hiển thị thông tin nhạc trong ứng dụng của bạn
   //   print('Updating selectedSong with: $song');
   // }
-  void updateSelectedSong(List<Map<String, dynamic>> songs, int index) async {
-  try {
-    // Dừng phát nhạc trước khi chuyển đến bài hát mới
-    await audioPlayer.stop();
 
-    // Cập nhật chỉ số và bài hát đang chơi
-    currentSongIndex = index;
-    Map<String, dynamic> song = songs[index];
-
-    // Tạo một AudioSource mới với thông tin của bài hát được chọn
-    AudioSource audioSource = AudioSource.uri(
-      Uri.parse(song['song']),
-      tag: MediaItem(
-        id: song['song'],
-        album: '',
-        title: song['nameSong'],
-        artist: song['author'],
-        artUri: Uri.parse(song['image']),
-        extras: {'image': song['image']},
+  void updateSelectedSong(Map<String, dynamic> song) async {
+    currentSong.value = RxMap<String, dynamic>.from(song);
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    QuerySnapshot qn = await _firestore.collection("today-songs").get();
+    for (QueryDocumentSnapshot doc in qn.docs) {
+      print("Document ID: ${doc.id}");
+      print("NameSong: ${doc["nameSong"]}");
+      print("Author: ${doc["author"]}");
+      print("Song URL: ${doc["song"]}");
+      print("Image URL: ${doc["image"]}");
+      print("----------------------------------------");
+    }
+    final List<AudioSource> songs = qn.docs.map((doc) {
+      return AudioSource.uri(
+        Uri.parse(doc["song"]),
+        tag: MediaItem(
+          id: doc["song"],
+          title: doc["nameSong"],
+          artist: doc["author"],
+          artUri: Uri.parse(doc["image"]),
+        ),
+      );
+    }).toList();
+    _songs.assignAll(
+      qn.docs.map(
+        (doc) => {
+          //"nameSong": doc["nameSong"],
+          // "song": doc["song"],
+          // "id": doc["id"],
+          // "image": doc["image"],
+          // "author": doc["author"],
+        },
       ),
     );
-
-    // Xóa tất cả các AudioSource hiện tại và thêm AudioSource mới
-    audioPlayer.setAudioSource(ConcatenatingAudioSource(children: [audioSource]));
-    
-    // Chơi bài hát mới
-    audioPlayer.play();
-
-    // Cập nhật thông tin như hình ảnh, tên bài hát, tác giả, ...
-    selectedSong.value = song;
-    print('Updating selectedSong with: $song');
-  } catch (e) {
-    print('Error updating selectedSong: $e');
+    audioPlayer.sequenceState;
+    print('Index Hiện tại: ${audioPlayer.currentIndex}');
+    print('Đang Phát: ${audioPlayer.playing}');
+    print('Vị trí: ${audioPlayer.position}');
+    final newPlaylist = ConcatenatingAudioSource(
+      children: songs,
+      useLazyPreparation: true,
+    );
+    await audioPlayer.setAudioSource(newPlaylist,
+        initialIndex: 0, initialPosition: Duration.zero);
+    // await audioPlayer.seek(Duration.zero, index: );
   }
-}
- 
+
+
 
   // Đoạn mã để cập nhật selectedSong khi chọn một bài hát mới
   void onSongSelected(Map<String, dynamic> song) {
@@ -160,18 +176,18 @@ class MusicPageController extends GetxController {
           ),
         );
       }).toList();
-       print("SỐ ${songs.length} audio sources.");
-      _songs.assignAll(
-        qn.docs.map(
-          (doc) => {
-            "nameSong": doc["nameSong"],
-            "song": doc["song"],
-            "id": doc["id"],
-            "image": doc["image"],
-            "author": doc["author"],
-          },
-        ),
-      );
+      print("SỐ ${songs.length} audio sources.");
+      // _songs.assignAll(
+      //   qn.docs.map(
+      //     (doc) => {
+      //       "nameSong": doc["nameSong"],
+      //       "song": doc["song"],
+      //       "id": doc["id"],
+      //       "image": doc["image"],
+      //       "author": doc["author"],
+      //     },
+      //   ),
+      // );
 
       // add mp3 vào newplaylist để chạy nhạc
       final newPlaylist = ConcatenatingAudioSource(children: songs);
@@ -184,3 +200,13 @@ class MusicPageController extends GetxController {
     }
   }
 }
+class CustomAudioSource {
+  final Uri uri;
+  final Map<String, dynamic> metadata;
+
+  CustomAudioSource({
+    required this.uri,
+    required this.metadata,
+  });
+}
+

@@ -22,7 +22,7 @@ class MusicPageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
      final controller = Get.find<MusicPageController>();
-     print('Updating UI with: ${controller.currentSong}');
+     print('Updating UI with: ${controller.selectedSong}');
     return GetBuilder<MusicPageController>(
       builder: (controller) {
         controller.updateSelectedSong(songData);
@@ -97,7 +97,7 @@ class MusicPageScreen extends StatelessWidget {
                             imageUrl: controller.currentSong['image'],
                             title: controller.currentSong["nameSong"],
                             artist: controller.currentSong["author"] ?? '',
-                            musicSongs: controller.currentSong["song"],
+                            musicSongs:controller.currentSong["song"],
                           );
                         },
                       );
@@ -116,9 +116,11 @@ class MusicPageScreen extends StatelessWidget {
                         timeLabelTextStyle: TextStyle(
                           color: Colors.white,
                         ),
+                        //thời gian hiện tại của âm thanh đó
                         progress: positionData?.position ?? Duration.zero,
-                        buffered:
-                            positionData?.bufferedPosition ?? Duration.zero,
+                        //thời gian đệm của âm thanh đó
+                        buffered:positionData?.bufferedPosition ?? Duration.zero,
+                        //tổng thời gian của âm thanh đó 
                         total: positionData?.duration ?? Duration.zero,
                         onSeek: controller.audioPlayer.seek,
                       );

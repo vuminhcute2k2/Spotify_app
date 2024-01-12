@@ -238,8 +238,9 @@ class _HomePageScreenState extends State<HomePageScreen>
                                       onTap: () {
                                         //  Map<String, dynamic> selectedSong =  Get.find<MusicPageController>().updateSelectedSong(selectedSong);
                                        // Get.to(() => MusicPageScreen(songData: todayhit));
-                                        musicController.updateSelectedSong(todayhit);
-                                        Get.to(() => MusicPageScreen(songData:todayhit));
+                                        // musicController.updateSelectedSong(todayhit);
+                                        // Get.to(() => MusicPageScreen(songData:todayhit));
+                                       musicController.onSongSelected(todayhit);
                                         //Get.toNamed(AppRouterName.MusicPage);
                                         // Get.to(() => MusicPageScreen(todayhit[index]));
                                         //Get.to(()=>MusicPageScreen())
