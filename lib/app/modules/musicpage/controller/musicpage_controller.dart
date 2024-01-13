@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -42,7 +44,7 @@ class MusicPageController extends GetxController {
     audioPlayer = AudioPlayer();
     _init();
     musicSongs();
-    //replayCurrentSong();
+    // replayCurrentSong();
   }
 
   //Hàm để cập nhật bài hát được chọn
@@ -72,7 +74,7 @@ class MusicPageController extends GetxController {
   // }
 
   void updateSelectedSong(Map<String, dynamic> song) async {
-    selectedSong.value = RxMap<String, dynamic>.from(song);
+    currentSong.value = RxMap<String, dynamic>.from(song);
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     QuerySnapshot qn = await _firestore.collection("today-songs").get();
     for (QueryDocumentSnapshot doc in qn.docs) {

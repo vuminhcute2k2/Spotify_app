@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 //import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:music_spotify_app/app/modules/home/controller/home_controller.dart';
 import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
 import 'package:rxdart/rxdart.dart';
@@ -17,12 +18,13 @@ class MusicPageScreen extends StatelessWidget {
   MusicPageScreen({required this.songData});
   // final MusicPageController musicPageController =
   //     Get.put(MusicPageController());
-  final MusicPageController musicPageController = Get.find<MusicPageController>();
+  final MusicPageController musicPageController =
+      Get.find<MusicPageController>();
 
   @override
   Widget build(BuildContext context) {
-     final controller = Get.find<MusicPageController>();
-     print('Updating UI with: ${controller.selectedSong}');
+    final controller = Get.find<MusicPageController>();
+    print('Updating UI with: ${controller.selectedSong}');
     return GetBuilder<MusicPageController>(
       builder: (controller) {
         controller.updateSelectedSong(songData);
@@ -119,8 +121,9 @@ class MusicPageScreen extends StatelessWidget {
                         //thời gian hiện tại của âm thanh đó
                         progress: positionData?.position ?? Duration.zero,
                         //thời gian đệm của âm thanh đó
-                        buffered:positionData?.bufferedPosition ?? Duration.zero,
-                        //tổng thời gian của âm thanh đó 
+                        buffered:
+                            positionData?.bufferedPosition ?? Duration.zero,
+                        //tổng thời gian của âm thanh đó
                         total: positionData?.duration ?? Duration.zero,
                         onSeek: controller.audioPlayer.seek,
                       );
@@ -214,7 +217,6 @@ class Controls extends StatelessWidget {
     super.key,
     required this.audioPlayer,
     required this.replayCallback,
-
   });
   final AudioPlayer audioPlayer;
   final VoidCallback replayCallback;
