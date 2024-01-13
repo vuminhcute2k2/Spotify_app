@@ -79,59 +79,63 @@ class MusicPageScreen extends StatelessWidget {
                   const SizedBox(
                     height: 28 * 3,
                   ),
-                  StreamBuilder<SequenceState?>(
-                    stream: controller.sequenceStateStream,
+                  StreamBuilder<void>(
+                    stream: musicPageController.onSongChanged,
                     builder: (context, snapshot) {
-                      // print('heloo ${snapshot.data}');
-                      return Obx(
-                        () {
-                          final List songs = controller.songs;
-                          if (songs.isEmpty) {
-                            return CircularProgressIndicator();
-                          }
-                          // return MediaMetaData(
-                          //   imageUrl: songData["image"],
-                          //   title: songData["nameSong"],
-                          //   artist: songData["author"] ?? '',
-                          //   musicSongs: songData["song"],
-                          // );
-                           return MediaMetaData(
-                            imageUrl: controller.currentSong['image'],
-                            title: controller.currentSong["nameSong"],
-                            artist: controller.currentSong["author"] ?? '',
-                            musicSongs:controller.currentSong["song"],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                 
+                      return Column(
+                        children: [
+                          StreamBuilder<SequenceState?>(
+                            stream: musicPageController.sequenceStateStream,
+                            builder: (context, snapshot) {
+                              final sequenceState = snapshot.data;
+                              if (sequenceState == null) {
+                                return CircularProgressIndicator();
+                              }
 
-                  StreamBuilder<PositionData>(
-                    stream: controller.positionDataStream,
-                    builder: (context, snapshot) {
-                      final positionData = snapshot.data;
-                      return ProgressBar(
-                        baseBarColor: Colors.grey[600],
-                        progressBarColor: Color(0XFF42C83C),
-                        thumbColor: Color(0XFF42C83C),
-                        timeLabelTextStyle: TextStyle(
-                          color: Colors.white,
-                        ),
-                        //thời gian hiện tại của âm thanh đó
-                        progress: positionData?.position ?? Duration.zero,
-                        //thời gian đệm của âm thanh đó
-                        buffered:
-                            positionData?.bufferedPosition ?? Duration.zero,
-                        //tổng thời gian của âm thanh đó
-                        total: positionData?.duration ?? Duration.zero,
-                        onSeek: controller.audioPlayer.seek,
+                              final currentIndex = sequenceState.currentIndex;
+                              final currentSong =
+                                  sequenceState.currentSource?.tag as MediaItem;
+
+                              // Hiển thị thông tin của bài hát hiện tại
+                              return MediaMetaData(
+                                imageUrl: currentSong.artUri.toString(),
+                                title: currentSong.title,
+                                artist:  currentSong.artist ?? '',
+                                musicSongs: currentSong.id,
+                              );
+                            },
+                          ),
+                          StreamBuilder<PositionData>(
+                            stream: musicPageController.positionDataStream,
+                            builder: (context, snapshot) {
+                              final positionData = snapshot.data;
+                              return ProgressBar(
+                                baseBarColor: Colors.grey[600],
+                                progressBarColor: Color(0XFF42C83C),
+                                thumbColor: Color(0XFF42C83C),
+                                timeLabelTextStyle: TextStyle(
+                                  color: Colors.white,
+                                ),
+                                //thời gian hiện tại của âm thanh đó
+                                progress:
+                                    positionData?.position ?? Duration.zero,
+                                //thời gian đệm của âm thanh đó
+                                buffered: positionData?.bufferedPosition ??
+                                    Duration.zero,
+                                //tổng thời gian của âm thanh đó
+                                total: positionData?.duration ?? Duration.zero,
+                                onSeek: controller.audioPlayer.seek,
+                              );
+                            },
+                          ),
+                          Controls(
+                            audioPlayer: musicPageController.audioPlayer,
+                            replayCallback:
+                                musicPageController.replayCurrentSong,
+                          ),
+                        ],
                       );
                     },
-                  ),
-                  Controls(
-                    audioPlayer: controller.audioPlayer,
-                    replayCallback: controller.replayCurrentSong,
                   ),
                 ],
               ),

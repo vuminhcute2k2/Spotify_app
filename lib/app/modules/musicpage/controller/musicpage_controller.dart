@@ -18,7 +18,9 @@ class MusicPageController extends GetxController {
   //map chứa dữ liệu của songs
   late final Rx<Map<String, dynamic>> selectedSong =
       Rx<Map<String, dynamic>>({});
-  RxList _products = [].obs;
+//khởi tạo một stream để thông báo khi 1 bài nhạc được thay đổi 
+  final _songChangedController = StreamController<void>.broadcast();
+  Stream<void> get onSongChanged => _songChangedController.stream;
   RxMap currentSong = {}.obs;
   //biểu thị thời gian hiện tại của âm thanh
   Stream<Duration> get positionStream => audioPlayer.positionStream;
@@ -44,47 +46,23 @@ class MusicPageController extends GetxController {
     audioPlayer = AudioPlayer();
     _init();
     musicSongs();
-    // replayCurrentSong();
+    replayCurrentSong();
   }
 
-  //Hàm để cập nhật bài hát được chọn
-  // void updateSelectedSong(Map<String, dynamic> song) async {
-  //   // Cập nhật selectedSong với thông tin mới
-  //   currentSong.value = RxMap<String, dynamic>.from(song);
-  //   //selectedSong.value = song;
-  //   // Dừng phát nhạc trước khi cập nhật bài hát mới
-  //   //await audioPlayer.stop();
-  //   // Tạo một AudioSource mới với thông tin của bài hát được chọn
-  //   AudioSource audioSource = AudioSource.uri(
-  //     Uri.parse(song['song']),
-  //     tag: MediaItem(
-  //       id: song['song'],
-  //       title: song['nameSong'],
-  //       artist: song['author'],
-  //       artUri: Uri.parse(song['image']),
-  //       extras: {'image': song['image']},
-  //     ),
-  //   );
-  //   audioPlayer.play();
-  //   // Xóa tất cả các AudioSource hiện tại và thêm AudioSource mới
-  //   audioPlayer.setAudioSource(ConcatenatingAudioSource(children: [audioSource]));
-  //   // Cập nhật thông tin như hình ảnh, tên bài hát, tác giả, ...
-  //   // Điều này phụ thuộc vào cách bạn hiển thị thông tin nhạc trong ứng dụng của bạn
-  //   print('Updating selectedSong with: $song');
-  // }
 
   void updateSelectedSong(Map<String, dynamic> song) async {
     currentSong.value = RxMap<String, dynamic>.from(song);
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     QuerySnapshot qn = await _firestore.collection("today-songs").get();
-    for (QueryDocumentSnapshot doc in qn.docs) {
-      print("Document ID: ${doc.id}");
-      print("NameSong: ${doc["nameSong"]}");
-      print("Author: ${doc["author"]}");
-      print("Song URL: ${doc["song"]}");
-      print("Image URL: ${doc["image"]}");
-      print("----------------------------------------");
-    }
+    // for (QueryDocumentSnapshot doc in qn.docs) {
+    //   print("Document ID: ${doc.id}");
+    //   print("NameSong: ${doc["nameSong"]}");
+    //   print("Author: ${doc["author"]}");
+    //   print("Song URL: ${doc["song"]}");
+    //   print("Image URL: ${doc["image"]}");
+    //   print("----------------------------------------");
+    // }
+    _songChangedController.add(null);
     final List<AudioSource> songs = qn.docs.map((doc) {
       return AudioSource.uri(
         Uri.parse(doc["song"]),
@@ -96,17 +74,7 @@ class MusicPageController extends GetxController {
         ),
       );
     }).toList();
-    _songs.assignAll(
-      qn.docs.map(
-        (doc) => {
-          //"nameSong": doc["nameSong"],
-          // "song": doc["song"],
-          // "id": doc["id"],
-          // "image": doc["image"],
-          // "author": doc["author"],
-        },
-      ),
-    );
+   
     //biến giám sát index
     int indexOfSelectedSong = songs.indexWhere((source) {
       // Kiểm tra xem source có phải là UriAudioSource không
@@ -116,10 +84,6 @@ class MusicPageController extends GetxController {
       }
       return false;
     });
-    audioPlayer.sequenceState;
-    print('Index Hiện tại: ${audioPlayer.currentIndex}');
-    print('Đang Phát: ${audioPlayer.playing}');
-    print('Vị trí: ${audioPlayer.position}');
     final newPlaylist = ConcatenatingAudioSource(
       children: songs,
     );
@@ -144,8 +108,7 @@ class MusicPageController extends GetxController {
       print('Error initializing audio player: $e');
     }
   }
-
-  // Handle replay current song event
+//hàm replay
   void replayCurrentSong() async {
     await audioPlayer.stop();
     await audioPlayer.seek(Duration.zero);
@@ -164,15 +127,6 @@ class MusicPageController extends GetxController {
       QuerySnapshot qn = await _firestore.collection("today-songs").get();
       print(qn.docs);
 
-      // Log thông tin của từng document trong collection
-      // for (QueryDocumentSnapshot doc in qn.docs) {
-      //   print("Document ID: ${doc.id}");
-      //   print("NameSong: ${doc["nameSong"]}");
-      //   print("Author: ${doc["author"]}");
-      //   print("Song URL: ${doc["song"]}");
-      //   print("Image URL: ${doc["image"]}");
-      //   print("----------------------------------------");
-      // }
       final List<AudioSource> songs = qn.docs.map((doc) {
         return AudioSource.uri(
           Uri.parse(doc["song"]),
@@ -185,36 +139,10 @@ class MusicPageController extends GetxController {
         );
       }).toList();
       print("SỐ ${songs.length} audio sources.");
-      // _songs.assignAll(
-      //   qn.docs.map(
-      //     (doc) => {
-      //       "nameSong": doc["nameSong"],
-      //       "song": doc["song"],
-      //       "id": doc["id"],
-      //       "image": doc["image"],
-      //       "author": doc["author"],
-      //     },
-      //   ),
-      // );
-
-      // add mp3 vào newplaylist để chạy nhạc
-      final newPlaylist = ConcatenatingAudioSource(children: songs);
-      print('Playlist AAAAAA ${newPlaylist.length}');
-      // // Set the new playlist to the audioPlayer
-      await audioPlayer.setAudioSource(newPlaylist);
-      // Nếu có bài hát, cập nhật selectedSong với bài hát đầu tiên
+     
     } catch (e) {
       print("Error fetching Songs: $e");
     }
   }
 }
 
-class CustomAudioSource {
-  final Uri uri;
-  final Map<String, dynamic> metadata;
-
-  CustomAudioSource({
-    required this.uri,
-    required this.metadata,
-  });
-}
