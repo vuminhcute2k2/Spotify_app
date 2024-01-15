@@ -45,7 +45,7 @@ class MusicPageController extends GetxController {
     super.onInit();
     audioPlayer = AudioPlayer();
     _init();
-    musicSongs();
+    // musicSongs();
     replayCurrentSong();
   }
 
@@ -121,28 +121,28 @@ class MusicPageController extends GetxController {
     super.onClose();
   }
 
-  Future<void> musicSongs() async {
-    try {
-      final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-      QuerySnapshot qn = await _firestore.collection("today-songs").get();
-      print(qn.docs);
+  // Future<void> musicSongs() async {
+  //   try {
+  //     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  //     QuerySnapshot qn = await _firestore.collection("today-songs").get();
+  //     print(qn.docs);
 
-      final List<AudioSource> songs = qn.docs.map((doc) {
-        return AudioSource.uri(
-          Uri.parse(doc["song"]),
-          tag: MediaItem(
-            id: doc["song"],
-            title: doc["nameSong"],
-            artist: doc["author"],
-            artUri: Uri.parse(doc["image"]),
-          ),
-        );
-      }).toList();
-      print("SỐ ${songs.length} audio sources.");
+  //     // final List<AudioSource> songs = qn.docs.map((doc) {
+  //     //   return AudioSource.uri(
+  //     //     Uri.parse(doc["song"]),
+  //     //     tag: MediaItem(
+  //     //       id: doc["song"],
+  //     //       title: doc["nameSong"],
+  //     //       artist: doc["author"],
+  //     //       artUri: Uri.parse(doc["image"]),
+  //     //     ),
+  //     //   );
+  //     // }).toList();
+  //     print("SỐ ${songs.length} audio sources.");
      
-    } catch (e) {
-      print("Error fetching Songs: $e");
-    }
-  }
+  //   } catch (e) {
+  //     print("Error fetching Songs: $e");
+  //   }
+  // }
 }
 
