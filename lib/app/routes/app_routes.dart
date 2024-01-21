@@ -62,6 +62,7 @@ import 'package:music_spotify_app/app/modules/home/views/profile_screen.dart';
 import 'package:music_spotify_app/app/modules/login/views/login_screen.dart';
 import 'package:music_spotify_app/app/modules/musicpage/view/musicpage_screen.dart';
 import 'package:music_spotify_app/app/modules/register/views/register_screen.dart';
+import 'package:music_spotify_app/app/modules/searchbar/views/search_screen.dart';
 import 'package:music_spotify_app/app/modules/signup/views/signup_screen.dart';
 import 'package:music_spotify_app/app/modules/splash/views/splash_screen.dart';
 import 'package:music_spotify_app/generated/widget_tree.dart';
@@ -118,7 +119,12 @@ class AppRouter {
         return GetPageRoute(
           page: () => const WidgetTree(),
           settings: settings,
-        );     
+        );
+      case AppRouterName.Search:
+        return GetPageRoute(
+          page: () =>  SearchScreen(),
+          settings: settings,
+        );       
     }
     return null;
   }
@@ -135,5 +141,6 @@ class AppRouterName {
   static const MusicPage ='/musicpage';
   static const Profile='/profile';
   static const WidgetTree='/widgettree';
+  static const Search='/search';
 
 }
