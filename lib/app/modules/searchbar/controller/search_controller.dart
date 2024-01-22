@@ -8,10 +8,21 @@ class SearchControllerBar extends GetxController {
   void initSearching() async {
     if (nameSongText.value.isNotEmpty) {
       try {
+        var upperCaseText = nameSongText.value.toUpperCase();
+        var lowerCaseText = nameSongText.value.toLowerCase();
+
         var result = await FirebaseFirestore.instance
             .collection('today-songs')
-            .where('nameSong', isEqualTo: nameSongText.value)
+            .where('nameSong', isEqualTo: upperCaseText)
             .get();
+
+        if (result.docs.isEmpty) {
+          result = await FirebaseFirestore.instance
+              .collection('today-songs')
+              .where('lowerCaseName', isEqualTo: lowerCaseText)
+              .get();
+        }
+
         postDocumentList.assignAll(result.docs);
       } catch (e) {
         print("Error searching: $e");
