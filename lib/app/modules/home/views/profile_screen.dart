@@ -424,7 +424,6 @@ Widget drawer() {
                   if (data is Map && data.containsKey('image')) {
                     var imageUrl = data['image'];
                     print(currentUser!.uid);
-
                     return Column(
                       children: [
                         Obx(
@@ -479,7 +478,6 @@ Widget drawer() {
                     );
                   } else {
                     // Trường 'image' không tồn tại trong dữ liệu hoặc data không phải là một Map.
-                    // Thực hiện xử lý tùy thuộc vào yêu cầu của bạn.
                     return const Center(
                       child: Text(
                         'Image not available',
@@ -537,6 +535,7 @@ Widget drawer() {
           const SizedBox(
             height: 10,
           ),
+          Spacer(),
           ListTile(
             leading: const Icon(
               inviteIcon,

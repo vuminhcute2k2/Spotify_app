@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_spotify_app/app/modules/home/controller/home_controller.dart';
+import 'package:music_spotify_app/app/modules/home/views/playlist_screen.dart';
 import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
 import 'package:rxdart/rxdart.dart';
@@ -93,16 +94,28 @@ class MusicPageScreen extends StatelessWidget {
                               }
 
                               final currentIndex = sequenceState.currentIndex;
-                              final currentSong =
-                                  sequenceState.currentSource?.tag as MediaItem;
+                              final currentSource = sequenceState.currentSource;
 
-                              // Hiển thị thông tin của bài hát hiện tại
-                              return MediaMetaData(
-                                imageUrl: currentSong.artUri.toString(),
-                                title: currentSong.title,
-                                artist:  currentSong.artist ?? '',
-                                musicSongs: currentSong.id,
-                              );
+                              // Kiểm tra xem currentSource có khác null hay không
+                              if (currentSource != null) {
+                                final currentTag = currentSource.tag;
+
+                                // Kiểm tra xem currentTag có phải là MediaItem không
+                                if (currentTag is MediaItem) {
+                                  // Hiển thị thông tin của bài hát hiện tại
+                                  return MediaMetaData(
+                                    imageUrl:
+                                        currentTag.artUri?.toString() ?? '',
+                                    title: currentTag.title ?? '',
+                                    artist: currentTag.artist ?? '',
+                                    musicSongs: currentTag.id ?? '',
+                                  );
+                                } else {
+                                  return Text('Không có dữ liệu MediaItem.');
+                                }
+                              } else {
+                                return Text('Không có dữ liệu currentSource.');
+                              }
                             },
                           ),
                           StreamBuilder<PositionData>(
@@ -160,9 +173,18 @@ class MediaMetaData extends StatelessWidget {
     required this.artist,
     required this.musicSongs,
   });
+  Map<String, dynamic> get songData => {
+        'imageUrl': imageUrl,
+        'title': title,
+        'artist': artist,
+        'musicSongs': musicSongs,
+      };
 
   @override
   Widget build(BuildContext context) {
+    final MusicPageController favoriteController =
+        Get.put(MusicPageController());
+    final bool isFavorite = favoriteController.isFavorite(musicSongs);
     return Column(
       children: [
         Container(
@@ -207,7 +229,20 @@ class MediaMetaData extends StatelessWidget {
                   ),
                 ],
               ),
-              SvgPicture.asset(ImageConstant.imgVuesaxOutlineHeart),
+              InkWell(
+                onTap: () {
+                  if (isFavorite) {
+                    favoriteController.removeFromFavorites(musicSongs);
+                  } else {
+                    favoriteController.addToFavorites(musicSongs);
+                  }
+                  favoriteController.onFavoriteButtonPressed(this.songData);
+                },
+                child: isFavorite
+                    ? Icon(Icons.favorite, color: Colors.red)
+                    : Icon(Icons.favorite_border, color: Colors.green),
+              ),
+              // SvgPicture.asset(ImageConstant.imgVuesaxOutlineHeart,),
             ],
           ),
         ),
