@@ -182,8 +182,7 @@ class MediaMetaData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MusicPageController favoriteController =
-        Get.put(MusicPageController());
+    final MusicPageController favoriteController = Get.put(MusicPageController());
     final bool isFavorite = favoriteController.isFavorite(musicSongs);
     return Column(
       children: [
@@ -231,12 +230,14 @@ class MediaMetaData extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  if (isFavorite) {
-                    favoriteController.removeFromFavorites(musicSongs);
-                  } else {
-                    favoriteController.addToFavorites(musicSongs);
-                  }
-                  favoriteController.onFavoriteButtonPressed(this.songData);
+                  // if (isFavorite) {
+                  //   favoriteController.removeFromFavorites(musicSongs);
+                  // } else {
+                  //   favoriteController.addToFavorites(musicSongs);
+                  // }
+                  // favoriteController.onFavoriteButtonPressed(this.songData);
+                   favoriteController.toggleFavorites(musicSongs, this.songData);
+                    //favoriteController.onFavoriteButtonPressed(this.songData);
                 },
                 child: isFavorite
                     ? Icon(Icons.favorite, color: Colors.red)

@@ -128,53 +128,10 @@ class MusicPageController extends GetxController {
     super.onClose();
   }
   //hàm sử lý sự kiện yêu thích 
-  void addToFavorites(String songId) {
-    if (!favoriteSongs.contains(songId)) {
-      favoriteSongs.add(songId);
-     
-    }else{
-      print('Invalid $songId');
-    }
-  }
-
-  void removeFromFavorites(String songId) {
-    favoriteSongs.remove(songId);
-    
-  }
-
   bool isFavorite(String songId) {
     return favoriteSongs.contains(songId);
   }
-  void addToPlaylist(Map<String, dynamic> songData) async {
-  try {
-    // Lấy ID của người dùng hiện tại
-    String userId = getCurrentUserId();  
-    
-    DocumentReference playlistRef = FirebaseFirestore.instance.collection('playlists').doc(userId);
 
-    // Lấy dữ liệu hiện tại của playlist
-    DocumentSnapshot playlistSnapshot = await playlistRef.get();
-
-    if (playlistSnapshot.exists) {
-      // Nếu playlist đã tồn tại, cập nhật dữ liệu bài hát vào playlist
-      await playlistRef.update({
-        'songs': FieldValue.arrayUnion([songData])
-      });
-    } else {
-      // Nếu playlist chưa tồn tại, tạo mới playlist với bài hát đầu tiên
-      await playlistRef.set({
-        'songs': [songData]
-      });
-    }
-
-    print('Song added to playlist successfully.');
-  } catch (e) {
-    print('Error adding song to playlist: $e');
-  }
-}
-void onFavoriteButtonPressed(Map<String, dynamic> songData) {
-  addToPlaylist(songData);
-}
 // Hàm lấy ID của người dùng hiện tại từ Firebase Authentication
 String getCurrentUserId() {
   // Kiểm tra xem người dùng đã đăng nhập chưa
@@ -186,6 +143,69 @@ String getCurrentUserId() {
     return 'unknown_user';
   }
 }
+
+ void toggleFavorites(String songId, Map<String, dynamic> songData) {
+    if (isFavorite(songId)) {
+      removeFromFavorites(songId);
+      removeFromFavoritesOnFirebase(songData);
+    } else {
+      addToFavorites(songId);
+      addToFavoritesOnFirebase(songData);
+    }
+  }
+
+  // Hàm xóa bài hát khỏi danh sách yêu thích
+  void removeFromFavorites(String songId) {
+    favoriteSongs.remove(songId);
+  }
+
+  // Hàm thêm bài hát vào danh sách yêu thích
+  void addToFavorites(String songId) {
+    favoriteSongs.add(songId);
+  }
+
+  // Hàm xóa bài hát khỏi danh sách yêu thích trên Firebase
+  void removeFromFavoritesOnFirebase(Map<String, dynamic> songData) async {
+    try {
+      String userId = getCurrentUserId();
+      DocumentReference favoritesRef =
+          FirebaseFirestore.instance.collection('favorites').doc(userId);
+         // Lấy dữ liệu hiện tại của playlist
+     
+      await favoritesRef.update({
+        'songs': FieldValue.arrayRemove([songData])
+      });
+
+      print('Removing from favorites on Firebase: $songData');
+    } catch (e) {
+      print('Error removing from favorites on Firebase: $e');
+    }
+  }
+
+  // Hàm thêm bài hát vào danh sách yêu thích trên Firebase
+  void addToFavoritesOnFirebase(Map<String, dynamic> songData) async {
+    try {
+      String userId = getCurrentUserId();
+      DocumentReference favoritesRef =
+          FirebaseFirestore.instance.collection('favorites').doc(userId);
+      DocumentSnapshot playlistSnapshot = await favoritesRef.get();
+     if (playlistSnapshot.exists) {
+      // Nếu playlist đã tồn tại, cập nhật dữ liệu bài hát vào playlist
+      await favoritesRef.update({
+        'songs': FieldValue.arrayUnion([songData])
+      });
+    } else {
+      // Nếu playlist chưa tồn tại, tạo mới playlist với bài hát đầu tiên
+      await favoritesRef.set({
+        'songs': [songData]
+      });
+    }
+
+    print('Song added to playlist successfully.');
+  } catch (e) {
+    print('Error adding song to playlist: $e');
+  }
+  }
 
   
 
