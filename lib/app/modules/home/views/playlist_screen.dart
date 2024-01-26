@@ -1,10 +1,9 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
 
 class PlayListScreen extends StatefulWidget {
-  const PlayListScreen({super.key});
+  const PlayListScreen({Key? key}) : super(key: key);
 
   @override
   State<PlayListScreen> createState() => _PlayListScreenState();
@@ -13,6 +12,26 @@ class PlayListScreen extends StatefulWidget {
 class _PlayListScreenState extends State<PlayListScreen> {
   final MusicPageController favoriteController =
       Get.find<MusicPageController>();
+
+  Widget playListItem(Map<String, dynamic> song) {
+    return ListTile(
+      title: Text(
+        song['title'],
+        style: const TextStyle(color: Colors.white),
+      ),
+      subtitle: Text(
+        song['artist'],
+        style: const TextStyle(color: Colors.grey),
+      ),
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(song['imageUrl']),
+      ),
+      onTap: () {
+        favoriteController.onSongSelected(song);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,60 +41,53 @@ class _PlayListScreenState extends State<PlayListScreen> {
         backgroundColor: Colors.black,
         centerTitle: true,
         leading: IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.search,
-              color: Colors.white,
-            )),
+          onPressed: () {},
+          icon: const Icon(
+            Icons.search,
+            color: Colors.white,
+          ),
+        ),
         title: const Text(
           'Playlists',
           style: TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.add,
-                color: Colors.white,
-              ))
+            onPressed: () {},
+            icon: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+          ),
         ],
       ),
-      body: Obx(
-        () {
-          return ListView.builder(
-            itemCount: favoriteController.songs.length,
-            itemBuilder: (context, index) {
-              final song = favoriteController.songs[index];
-              return PlayListItem(song: song);
-            },
-          );
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        // Sử dụng hàm getFavoriteSongsDetails thay vì getFavoriteSongsFromFirebase
+        future: favoriteController.getFavoriteSongsDetails(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+            return Center(
+              child: Text(
+                'No favorite songs.',
+                style: TextStyle(color: Colors.white),
+              ),
+            );
+          } else {
+            final favoriteSongs = snapshot.data!;
+            return ListView.builder(
+              itemCount: favoriteSongs.length,
+              itemBuilder: (context, index) {
+                final song = favoriteSongs[index];
+                return playListItem(song);
+              },
+            );
+          }
         },
       ),
-    );
-  }
-}
-class PlayListItem extends StatelessWidget {
-  final Map<String, dynamic> song;
-
-  PlayListItem({required this.song});
-  final MusicPageController favoriteController = Get.put(MusicPageController());
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(
-        song['nameSong'],
-        style: const TextStyle(color: Colors.white),
-      ),
-      subtitle: Text(
-        song['author'],
-        style: const TextStyle(color: Colors.grey),
-      ),
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(song['image']),
-      ),
-      onTap: () {
-        favoriteController.onSongSelected(song);
-      },
     );
   }
 }

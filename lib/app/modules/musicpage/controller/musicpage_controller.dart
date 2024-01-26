@@ -45,7 +45,7 @@ class MusicPageController extends GetxController {
   //sử lý sự kiện thêm vào mục yêu tích <3
   var favoriteSongs = <String>[].obs;
   final Rx<Map<String, dynamic>> currentSongInfo = Rx<Map<String, dynamic>>({});
-
+  
 
   @override
   void onInit() {
@@ -100,7 +100,7 @@ class MusicPageController extends GetxController {
 
   // Đoạn mã để cập nhật selectedSong khi chọn một bài hát mới
   void onSongSelected(Map<String, dynamic> song) {
-    // Cập nhật thông tin và chơi bài hát ở đây
+    // Cập nhật thông tin và chạy bài hát
     updateSelectedSong(song);
     Get.to(() => MusicPageScreen(songData: song));
     replayCurrentSong();
@@ -170,8 +170,6 @@ String getCurrentUserId() {
       String userId = getCurrentUserId();
       DocumentReference favoritesRef =
           FirebaseFirestore.instance.collection('favorites').doc(userId);
-         // Lấy dữ liệu hiện tại của playlist
-     
       await favoritesRef.update({
         'songs': FieldValue.arrayRemove([songData])
       });
@@ -207,7 +205,36 @@ String getCurrentUserId() {
   }
   }
 
-  
+  Future<List<Map<String, dynamic>>> getFavoriteSongsFromFirebase() async {
+    try {
+      String userId = getCurrentUserId();
+      DocumentSnapshot favoritesSnapshot =
+          await FirebaseFirestore.instance.collection('favorites').doc(userId).get();
+
+      if (favoritesSnapshot.exists) {
+        List<Map<String, dynamic>> favoriteSongs =
+            List<Map<String, dynamic>>.from(favoritesSnapshot['songs']);
+        print('Favorite songs from Firebase: $favoriteSongs');
+        return favoriteSongs;
+      } else {
+        print('No favorite songs found in Firebase.');
+        return [];
+      }
+    } catch (e) {
+      print('Error getting favorite songs from Firebase: $e');
+      return [];
+    }
+  }
+
+Future<List<Map<String, dynamic>>> getFavoriteSongsDetails() async {
+    try {
+      return await getFavoriteSongsFromFirebase();
+    } catch (e) {
+      print('Error getting favorite songs details: $e');
+      return [];
+    }
+  }
+
 
 
 }

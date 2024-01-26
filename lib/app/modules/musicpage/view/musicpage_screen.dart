@@ -165,13 +165,13 @@ class MediaMetaData extends StatelessWidget {
   final String title;
   final String artist;
   final String musicSongs;
-
   MediaMetaData({
     super.key,
     required this.imageUrl,
     required this.title,
     required this.artist,
     required this.musicSongs,
+    
   });
   Map<String, dynamic> get songData => {
         'imageUrl': imageUrl,
@@ -209,7 +209,7 @@ class MediaMetaData extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style:const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -219,7 +219,7 @@ class MediaMetaData extends StatelessWidget {
                     alignment: Alignment.bottomLeft,
                     child: Text(
                       artist,
-                      style: TextStyle(
+                      style:const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -230,18 +230,11 @@ class MediaMetaData extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  // if (isFavorite) {
-                  //   favoriteController.removeFromFavorites(musicSongs);
-                  // } else {
-                  //   favoriteController.addToFavorites(musicSongs);
-                  // }
-                  // favoriteController.onFavoriteButtonPressed(this.songData);
                    favoriteController.toggleFavorites(musicSongs, this.songData);
-                    //favoriteController.onFavoriteButtonPressed(this.songData);
                 },
                 child: isFavorite
-                    ? Icon(Icons.favorite, color: Colors.red)
-                    : Icon(Icons.favorite_border, color: Colors.green),
+                    ?const Icon(Icons.favorite, color: Colors.red)
+                    :const Icon(Icons.favorite_border, color: Colors.green),
               ),
               // SvgPicture.asset(ImageConstant.imgVuesaxOutlineHeart,),
             ],
