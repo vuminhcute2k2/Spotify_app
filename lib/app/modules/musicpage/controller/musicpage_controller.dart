@@ -55,7 +55,6 @@ class MusicPageController extends GetxController {
     // musicSongs();
     replayCurrentSong();
   }
-
   void updateSelectedSong(Map<String, dynamic> song) async {
     currentSong.value = RxMap<String, dynamic>.from(song);
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -100,10 +99,13 @@ class MusicPageController extends GetxController {
 
   // Đoạn mã để cập nhật selectedSong khi chọn một bài hát mới
   void onSongSelected(Map<String, dynamic> song) {
-    // Cập nhật thông tin và chạy bài hát
-    updateSelectedSong(song);
-    Get.to(() => MusicPageScreen(songData: song));
-    replayCurrentSong();
+    if (song['song'] != null && song['song'].toString().isNotEmpty) {
+      updateSelectedSong(song);
+      replayCurrentSong();
+      Get.to(() => MusicPageScreen(songData: song));
+    } else {
+      print('Invalid song URL');
+    }
   }
 
   Future<void> _init() async {
@@ -143,7 +145,7 @@ String getCurrentUserId() {
     return 'unknown_user';
   }
 }
-
+  //onclick thêm xóa bài hát yêu thích 
  void toggleFavorites(String songId, Map<String, dynamic> songData) {
     if (isFavorite(songId)) {
       removeFromFavorites(songId);
@@ -235,6 +237,55 @@ Future<List<Map<String, dynamic>>> getFavoriteSongsDetails() async {
     }
   }
 
+//hàm chạy nhạc cho phần playlist
+ Future<void> playFavoriteSongs({Map<String, dynamic>? selectedSong}) async {
+  try {
+    // Lấy ID của người dùng hiện tại
+    String userId = getCurrentUserId();
 
+    DocumentSnapshot favoritesSnapshot =
+        await FirebaseFirestore.instance.collection('favorites').doc(userId).get();
+
+    if (favoritesSnapshot.exists) {
+      // Lấy danh sách bài hát từ dữ liệu Firestore
+      List<Map<String, dynamic>> favoriteSongs = List<Map<String, dynamic>>.from(favoritesSnapshot['songs']);
+
+      // Chuyển dữ liệu thành danh sách AudioSource
+      List<AudioSource> songs = favoriteSongs.map((song) {
+        return AudioSource.uri(
+          Uri.parse(song['musicSongs']),
+          tag: MediaItem(
+            id: song['musicSongs'],
+            title: song['title'],
+            artist: song['artist'],
+            artUri: Uri.parse(song['imageUrl']),
+          ),
+        );
+      }).toList();
+
+      // Cập nhật trình phát nhạc với danh sách bài hát mới
+      await audioPlayer.setAudioSource(ConcatenatingAudioSource(children: songs));
+
+      if (selectedSong != null) {
+        // Tìm vị trí của bài hát được chọn trong danh sách
+        int indexOfSelectedSong = favoriteSongs.indexWhere((song) =>
+            song['musicSongs'] == selectedSong['musicSongs']);
+
+        // Nếu tìm thấy, chạy bài hát được chọn
+        if (indexOfSelectedSong != -1) {
+          await audioPlayer.seek(Duration.zero, index: indexOfSelectedSong);
+          await audioPlayer.play();
+        }
+      } else {
+        // Nếu không có bài hát được chọn, bắt đầu phát từ vị trí đầu tiên
+        await audioPlayer.play();
+      }
+    } else {
+      print('Không tìm thấy danh sách yêu thích cho người dùng hiện tại.');
+    }
+  } catch (e) {
+    print('Lỗi khi phát nhạc từ danh sách yêu thích: $e');
+  }
+}
 
 }

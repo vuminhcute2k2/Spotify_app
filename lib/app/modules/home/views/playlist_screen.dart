@@ -27,7 +27,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
         backgroundImage: NetworkImage(song['imageUrl']),
       ),
       onTap: () {
-        favoriteController.onSongSelected(song);
+        favoriteController.playFavoriteSongs(selectedSong: song);
       },
     );
   }
@@ -61,31 +61,34 @@ class _PlayListScreenState extends State<PlayListScreen> {
           ),
         ],
       ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        // Sử dụng hàm getFavoriteSongsDetails thay vì getFavoriteSongsFromFirebase
-        future: favoriteController.getFavoriteSongsDetails(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-            return Center(
-              child: Text(
-                'No favorite songs.',
-                style: TextStyle(color: Colors.white),
-              ),
-            );
-          } else {
-            final favoriteSongs = snapshot.data!;
-            return ListView.builder(
-              itemCount: favoriteSongs.length,
-              itemBuilder: (context, index) {
-                final song = favoriteSongs[index];
-                return playListItem(song);
-              },
-            );
-          }
+      body: GetBuilder<MusicPageController>(
+        builder: (controller) {
+          return FutureBuilder<List<Map<String, dynamic>>>(
+            future: favoriteController.getFavoriteSongsDetails(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No favorite songs.',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
+              } else {
+                final favoriteSongs = snapshot.data!;
+                return ListView.builder(
+                  itemCount: favoriteSongs.length,
+                  itemBuilder: (context, index) {
+                    final song = favoriteSongs[index];
+                    return playListItem(song);
+                  },
+                );
+              }
+            },
+          );
         },
       ),
     );
