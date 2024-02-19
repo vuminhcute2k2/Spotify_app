@@ -171,7 +171,6 @@ class MediaMetaData extends StatelessWidget {
     required this.title,
     required this.artist,
     required this.musicSongs,
-    
   });
   Map<String, dynamic> get songData => {
         'imageUrl': imageUrl,
@@ -182,7 +181,8 @@ class MediaMetaData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MusicPageController favoriteController = Get.put(MusicPageController());
+    final MusicPageController favoriteController =
+        Get.put(MusicPageController());
     final bool isFavorite = favoriteController.isFavorite(musicSongs);
     return Column(
       children: [
@@ -209,7 +209,7 @@ class MediaMetaData extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style:const TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -219,7 +219,7 @@ class MediaMetaData extends StatelessWidget {
                     alignment: Alignment.bottomLeft,
                     child: Text(
                       artist,
-                      style:const TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -230,12 +230,17 @@ class MediaMetaData extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                   favoriteController.toggleFavorites(musicSongs, this.songData);
+                  favoriteController.toggleFavorites(musicSongs, this.songData);
                 },
-                child: isFavorite
-                    ?const Icon(Icons.favorite, color: Colors.red)
-                    :const Icon(Icons.favorite_border, color: Colors.green),
+            
+                child: Obx(() {
+                  final isFavorite = favoriteController.isFavorite(musicSongs);
+                  return isFavorite
+                      ? Icon(Icons.favorite, color: Colors.red)
+                      : Icon(Icons.favorite_border, color: Colors.green);
+                }),
               ),
+
               // SvgPicture.asset(ImageConstant.imgVuesaxOutlineHeart,),
             ],
           ),

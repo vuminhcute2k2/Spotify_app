@@ -53,6 +53,7 @@ dependencies:
   velocity_x: ^3.0.0
   cloud_firestore: ^4.13.6
   http: ^1.1.2
+  lottie: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +81,7 @@ flutter:
   assets:
     - assets/images/
     - assets/audio/
+    - assets/json/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
