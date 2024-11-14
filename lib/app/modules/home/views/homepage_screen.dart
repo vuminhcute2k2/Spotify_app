@@ -1,18 +1,15 @@
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:music_spotify_app/app/modules/home/tabbar/views/album_screen.dart';
 import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
-import 'package:music_spotify_app/app/modules/musicpage/view/musicpage_screen.dart';
 import 'package:music_spotify_app/app/modules/searchbar/views/search_screen.dart';
-import 'package:music_spotify_app/app/routes/app_routes.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
 import 'package:music_spotify_app/app/modules/home/tabbar/views/artist_screen.dart';
 import 'package:music_spotify_app/app/modules/home/controller/home_controller.dart';
-import 'package:music_spotify_app/model/songs.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({super.key});
@@ -28,13 +25,14 @@ class _HomePageScreenState extends State<HomePageScreen>
   final MusicPageController musicController =
       Get.put(MusicPageController());
   late TabController tabviewController;
-
+  late Future<List<dynamic>> albumsFuture;
   @override
   void initState() {
     super.initState();
     tabviewController = TabController(length: 4, vsync: this);
     homeController.fetchCarouselImages();
     homeController.fetchSongs();
+    homeController.fetchAlbums(); // Fetch albums from Spotify
   }
 
   @override
@@ -84,12 +82,12 @@ class _HomePageScreenState extends State<HomePageScreen>
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.06,
                 ),
-                Container(
+                SizedBox(
                   height: MediaQuery.of(context).size.height * 0.2,
                   child: Stack(
                     children: [
                       Obx(
-                        () => Container(
+                        () => SizedBox(
                           width: double.infinity,
                           height: double.infinity,
                           child: CarouselSlider(
@@ -177,14 +175,14 @@ class _HomePageScreenState extends State<HomePageScreen>
                     ),
                   ),
                 ),
-                Container(
+                SizedBox(
                   height: MediaQuery.of(context).size.height * 0.22,
                   child: ListView.builder(
                     itemCount: homeController.songs.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (_, index) {
                       final todayHit = homeController.songs[index];
-                      return Container(
+                      return SizedBox(
                         width: MediaQuery.of(context).size.width * 0.3,
                         child: Column(
                           children: [
@@ -252,7 +250,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                     },
                   ),
                 ),
-                Container(
+                SizedBox(
                   height: MediaQuery.of(context).size.height * 0.05,
                   child: TabBar(
                     controller: tabviewController,
@@ -315,17 +313,18 @@ class _HomePageScreenState extends State<HomePageScreen>
                   ),
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
+                  height: MediaQuery.of(context).size.height * 0.3,
                   child: TabBarView(
                     controller: tabviewController,
                     children: [
                       ItemArtist(context),
-                      const Center(
-                        child: Text(
-                          "It's Album",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                      // const Center(
+                      //   child: Text(
+                      //     "It's Album",
+                      //     style: TextStyle(color: Colors.white),
+                      //   ),
+                      // ),
+                      ItemAlbum(context),
                       const Center(
                         child: Text(
                           "It's Podcast",

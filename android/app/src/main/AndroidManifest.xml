@@ -10,9 +10,9 @@
         <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
         <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
         <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+        <meta-data android:name="appAuthRedirectScheme" android:value="http://localhost:8080/callback" />
     <application
         android:label="music_spotify_app"
-        android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
 

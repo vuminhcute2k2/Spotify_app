@@ -74,11 +74,11 @@ class _ContinueScreenState extends State<ContinueScreen> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    margin:const EdgeInsets.symmetric(horizontal: 20),
                     child: SizedBox(
                       child: Column(
                         children: [
-                          Text(
+                          const Text(
                             'Choose Mode',
                             style: TextStyle(
                                 //color: Colors.white,
@@ -95,7 +95,7 @@ class _ContinueScreenState extends State<ContinueScreen> {
                                       Get.isDarkMode ? null:Get.changeTheme(ThemeData.dark());
                                     },
                                     child: Container(
-                                      padding: EdgeInsets.all(16.0),
+                                      padding:const EdgeInsets.all(16.0),
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(
                                             0.5), // Độ trong suốt của màu xanh
@@ -108,7 +108,7 @@ class _ContinueScreenState extends State<ContinueScreen> {
                                       ),
                                     ),
                                   ),
-                                  Text(
+                                  const Text(
                                     'Dark mode',
                                     style: TextStyle(
                                         color: Colors.white,
@@ -126,7 +126,7 @@ class _ContinueScreenState extends State<ContinueScreen> {
                                       Get.isDarkMode ? Get.changeTheme(ThemeData.light()):null;
                                     },
                                     child: Container(
-                                      padding: EdgeInsets.all(16.0),
+                                      padding:const EdgeInsets.all(16.0),
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(
                                             0.5), 
@@ -139,7 +139,7 @@ class _ContinueScreenState extends State<ContinueScreen> {
                                       ),
                                     ),
                                   ),
-                                  Text(
+                                  const Text(
                                     'Light mode',
                                     style: TextStyle(
                                         color: Colors.white,
@@ -165,7 +165,7 @@ class _ContinueScreenState extends State<ContinueScreen> {
                               margin:
                                   const EdgeInsets.only(left: 20, right: 20),
                               decoration: BoxDecoration(
-                                color: Color(0XFF1ED760),
+                                color:const Color(0XFF1ED760),
                                 borderRadius: BorderRadius.circular(80),
                               ),
                               child: const Center(

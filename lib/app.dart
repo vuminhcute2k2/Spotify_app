@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:music_spotify_app/app/modules/home/controller/profile_controller.dart';
-import 'package:music_spotify_app/app/modules/home/views/homepage_screen.dart';
+// import 'package:music_spotify_app/app/modules/home/controller/profile_controller.dart';
+// import 'package:music_spotify_app/app/modules/home/views/homepage_screen.dart';
 import 'package:music_spotify_app/app/modules/home/views/navigatorhome_screen.dart';
 import 'package:music_spotify_app/app/modules/login/views/login_screen.dart';
 import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
 import 'package:music_spotify_app/app/routes/app_routes.dart';
-import 'package:music_spotify_app/common/authentication.dart';
+// import 'package:music_spotify_app/common/authentication.dart';
 
 class SpotifyScreen extends StatelessWidget {
   const SpotifyScreen({super.key});
@@ -28,7 +28,7 @@ class SpotifyScreen extends StatelessWidget {
           if(snapshot.connectionState == ConnectionState.active){
             if(snapshot.hasData){
               return const NavigatorHomeScreen();
-            }else if(snapshot.hasError){
+            }else if(snapshot.hasError){  
               return Center(child: Text('${snapshot.error}'),
               );
             }

@@ -73,7 +73,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           fontWeight: FontWeight.bold),
                     )),
                 const SizedBox(height: 10,),    
-                Container(
+                SizedBox(
                   width: double.infinity,
                   height: 200,
                   child: ListView.builder(
@@ -88,7 +88,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               //color: Colors.grey
                               border: Border.all(width: 0.5)),
                           child: Container(
-                            margin: EdgeInsets.symmetric(vertical: 10),
+                            margin: const EdgeInsets.symmetric(vertical: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -106,7 +106,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   ),
                                 ),
                                 Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 30),
+                                  margin: const EdgeInsets.symmetric(horizontal: 30),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -147,7 +147,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           fontWeight: FontWeight.bold),
                     )),
                 const SizedBox(height: 10,),
-                Container(
+                SizedBox(
                   width: double.infinity,
                   height: 200,
                   child: ListView.builder(
@@ -161,7 +161,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               //color: Colors.grey
                               border: Border.all(width: 0.5)),
                           child: Container(
-                            margin: EdgeInsets.symmetric(vertical: 10),
+                            margin: const EdgeInsets.symmetric(vertical: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -179,7 +179,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   ),
                                 ),
                                 Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 30),
+                                  margin: const EdgeInsets.symmetric(horizontal: 30),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [

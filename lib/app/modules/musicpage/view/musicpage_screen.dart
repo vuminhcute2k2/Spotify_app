@@ -1,17 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 //import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:music_spotify_app/app/modules/home/controller/home_controller.dart';
-import 'package:music_spotify_app/app/modules/home/views/playlist_screen.dart';
 import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
-import 'package:rxdart/rxdart.dart';
 
 class MusicPageScreen extends StatelessWidget {
   final Map<String, dynamic> songData;
@@ -90,9 +86,8 @@ class MusicPageScreen extends StatelessWidget {
                             builder: (context, snapshot) {
                               final sequenceState = snapshot.data;
                               if (sequenceState == null) {
-                                return CircularProgressIndicator();
+                                return const CircularProgressIndicator();
                               }
-
                               final currentIndex = sequenceState.currentIndex;
                               final currentSource = sequenceState.currentSource;
 
@@ -111,10 +106,10 @@ class MusicPageScreen extends StatelessWidget {
                                     musicSongs: currentTag.id ?? '',
                                   );
                                 } else {
-                                  return Text('Không có dữ liệu MediaItem.');
+                                  return const Text('Không có dữ liệu MediaItem.');
                                 }
                               } else {
-                                return Text('Không có dữ liệu currentSource.');
+                                return const Text('Không có dữ liệu currentSource.');
                               }
                             },
                           ),
@@ -236,8 +231,8 @@ class MediaMetaData extends StatelessWidget {
                 child: Obx(() {
                   final isFavorite = favoriteController.isFavorite(musicSongs);
                   return isFavorite
-                      ? Icon(Icons.favorite, color: Colors.red)
-                      : Icon(Icons.favorite_border, color: Colors.green);
+                      ?const Icon(Icons.favorite, color: Colors.red)
+                      :const Icon(Icons.favorite_border, color: Colors.green);
                 }),
               ),
 

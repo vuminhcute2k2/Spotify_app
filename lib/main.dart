@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_spotify_app/app.dart';
 import 'package:music_spotify_app/app/modules/home/controller/profile_controller.dart';
+import 'package:music_spotify_app/model/spotifyAPI.dart';
 // void main()async {
 //   WidgetsFlutterBinding.ensureInitialized();
 //   await Firebase.initializeApp();
@@ -16,6 +17,7 @@ Future<void> main() async {
   try {
     await Firebase.initializeApp();
     print('Firebase initialized successfully');
+    final spotifyApi = SpotifyApi();
   } catch (e) {
     print('Error initializing Firebase: $e');
     // Handle Firebase initialization error

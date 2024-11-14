@@ -89,107 +89,116 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Container(
                   child: Column(
                     children: [
-                       Container(
-            alignment: Alignment.center,
-            padding: const EdgeInsets.all(12.0),
-            child: FutureBuilder(
-              future: StoreServices.getUser(auth.currentUser!.uid),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  // Nếu dữ liệu đang được tải, hiển thị tiến trình chờ
-                  return const Center(
-                    child: CircularProgressIndicator(
-                        // valueColor: AlwaysStoppedAnimation(Colors.white),
-                        ),
-                  );
-                } else if (snapshot.hasError) {
-                  // Nếu có lỗi khi tải dữ liệu, hiển thị thông báo lỗi
-                  return Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  );
-                } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  // Nếu không có dữ liệu, hiển thị thông báo không có dữ liệu
-                  return const Center(
-                    child: Text('No data available'),
-                  );
-                } else {
-                  var data = snapshot.data!.docs[0].data();
-                  print("xin chao:${data}");
-                  if (data is Map && data.containsKey('image')) {
-                    var imageUrl = data['image'];
-                    print(currentUser!.uid);
+                      Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(12.0),
+                        child: FutureBuilder(
+                          future: StoreServices.getUser(auth.currentUser!.uid),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              // Nếu dữ liệu đang được tải, hiển thị tiến trình chờ
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                    // valueColor: AlwaysStoppedAnimation(Colors.white),
+                                    ),
+                              );
+                            } else if (snapshot.hasError) {
+                              // Nếu có lỗi khi tải dữ liệu, hiển thị thông báo lỗi
+                              return Center(
+                                child: Text('Error: ${snapshot.error}'),
+                              );
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.docs.isEmpty) {
+                              // Nếu không có dữ liệu, hiển thị thông báo không có dữ liệu
+                              return const Center(
+                                child: Text('No data available'),
+                              );
+                            } else {
+                              var data = snapshot.data!.docs[0].data();
+                              print("xin chao:${data}");
+                              if (data is Map && data.containsKey('image')) {
+                                var imageUrl = data['image'];
+                                print(currentUser!.uid);
 
-                    return Column(
-                      children: [
-                        Obx(
-                          () => Column(
-                            children: [
-                              profileController.imgpath.isEmpty &&
-                                      data['image'] == ''
-                                  ? CircleAvatar(
-                                      radius: 60,
-                                      backgroundColor: null,
-                                      child: Image.network(
-                                        "https://i.pinimg.com/736x/ff/a0/9a/ffa09aec412db3f54deadf1b3781de2a.jpg",
-                                        //color: Colors.white,
-                                      )
-                                          .box
-                                          .roundedFull
-                                          .clip(Clip.antiAlias)
-                                          .make(),
-                                    )
-                                  //when imgpath is not empty means file is selected
-                                  : profileController.imgpath.isNotEmpty
-                                      ? Image.file(File(
-                                              profileController.imgpath.value))
-                                          .box
-                                          .roundedFull
-                                          .clip(Clip.antiAlias)
-                                          .make()
-                                      :
-                                      //show network img form document
-                                      CircleAvatar(
-                                          radius: 60,
-                                          backgroundColor: null,
-                                          child: Image.network(
-                                            data['image'],
-                                          )
-                                              .box
-                                              .roundedFull
-                                              .clip(Clip.antiAlias)
-                                              .make()),
-                              const SizedBox(height: 5,),               
-                              SizedBox(
+                                return Column(
+                                  children: [
+                                    Obx(
+                                      () => Column(
+                                        children: [
+                                          profileController.imgpath.isEmpty &&
+                                                  data['image'] == ''
+                                              ? CircleAvatar(
+                                                  radius: 60,
+                                                  backgroundColor: null,
+                                                  child: Image.network(
+                                                    "https://i.pinimg.com/736x/ff/a0/9a/ffa09aec412db3f54deadf1b3781de2a.jpg",
+                                                    //color: Colors.white,
+                                                  )
+                                                      .box
+                                                      .roundedFull
+                                                      .clip(Clip.antiAlias)
+                                                      .make(),
+                                                )
+                                              //when imgpath is not empty means file is selected
+                                              : profileController
+                                                      .imgpath.isNotEmpty
+                                                  ? Image.file(File(
+                                                          profileController
+                                                              .imgpath.value))
+                                                      .box
+                                                      .roundedFull
+                                                      .clip(Clip.antiAlias)
+                                                      .make()
+                                                  :
+                                                  //show network img form document
+                                                  CircleAvatar(
+                                                      radius: 60,
+                                                      backgroundColor: null,
+                                                      child: Image.network(
+                                                        data['image'],
+                                                      )
+                                                          .box
+                                                          .roundedFull
+                                                          .clip(Clip.antiAlias)
+                                                          .make()),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          SizedBox(
+                                              child: Text(
+                                            data['fullname'],
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          )),
+                                          SizedBox(
+                                            child: Text(
+                                              data['email'],
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return const Center(
                                   child: Text(
-                                data['fullname'],
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              )),
-                              SizedBox(
-                                child: Text(data['email'],style:const TextStyle(color: Colors.white,fontSize: 14),),
-                              ),
-                            ],
-                          ),
+                                    'Image not available',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                );
+                              }
+                            }
+                          },
                         ),
-                      ],
-                    );
-                  } else {
-                    // Trường 'image' không tồn tại trong dữ liệu hoặc data không phải là một Map.
-                    // Thực hiện xử lý tùy thuộc vào yêu cầu của bạn.
-                    return const Center(
-                      child: Text(
-                        'Image not available',
-                        style: TextStyle(color: Colors.white),
                       ),
-                    );
-                  }
-                }
-              },
-            ),
-          ),
                     ],
                   ),
                 ),
@@ -256,7 +265,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Colors.grey.withOpacity(0.5), // Màu của shadow
                       spreadRadius: 5, // Bản rộng của shadow
                       blurRadius: 5, // Độ mờ của shadow
-                      offset: Offset(0, 3), // Vị trí của shadow
+                      offset: const Offset(0, 3), // Vị trí của shadow
                     ),
                   ],
                 ),
@@ -265,7 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.symmetric(vertical: 20.0),
                       child: Align(
                           alignment: Alignment.topLeft,
@@ -313,8 +322,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ),
                                     Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 30),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 30),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -511,7 +520,7 @@ Widget drawer() {
                 onTap: () {
                   switch (index) {
                     case 0:
-                     Get.to(() => const EditAccountScreen(),
+                      Get.to(() => const EditAccountScreen(),
                           transition: Transition.downToUp);
                       break;
                     default:
@@ -535,7 +544,7 @@ Widget drawer() {
           const SizedBox(
             height: 10,
           ),
-          Spacer(),
+          const Spacer(),
           ListTile(
             leading: const Icon(
               inviteIcon,
@@ -543,7 +552,7 @@ Widget drawer() {
             ),
             title: invite.text.semiBold.white.make(),
           ),
-          Spacer(),
+          const Spacer(),
           ListTile(
             onTap: () async {
               await Auth().logout();
@@ -580,7 +589,7 @@ Widget pickerDialog(context, controller) {
         mainAxisSize: MainAxisSize.min,
         children: [
           soucre.text.semiBold.white.make(),
-          Divider(),
+          const Divider(),
           const SizedBox(
             height: 10,
           ),
@@ -651,8 +660,7 @@ const listOfFeatures = [
   "Synced",
   "Rellable"
 ];
-const 
-    account = "Account",
+const account = "Account",
     soucre = "Select soucre",
     gallery = "Gallery",
     camera = "Camera",

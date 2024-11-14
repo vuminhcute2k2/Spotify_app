@@ -39,7 +39,6 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                       ),
                     ),
                     // Nội dung bạn muốn đặt trên background image
-                    // Ví dụ: Text, button, v.v.
                      SizedBox(
                       child: Column(
                         children: [
@@ -78,7 +77,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                               padding:const EdgeInsets.symmetric(vertical: 16),
                               margin: const EdgeInsets.only(left: 20, right: 20),
                               decoration: BoxDecoration(
-                              color: Color(0XFF42C83C),
+                              color: const Color(0XFF42C83C),
                               borderRadius: BorderRadius.circular(80),
                               ),
                               child:const Center(

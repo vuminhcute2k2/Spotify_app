@@ -8,8 +8,6 @@ import 'package:music_spotify_app/app/modules/home/views/history_screen.dart';
 import 'package:music_spotify_app/app/modules/home/views/homepage_screen.dart';
 import 'package:music_spotify_app/app/modules/home/views/playlist_screen.dart';
 import 'package:music_spotify_app/app/modules/home/views/profile_screen.dart';
-import 'package:music_spotify_app/app/routes/app_routes.dart';
-import 'package:music_spotify_app/common/authentication.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -132,7 +130,7 @@ class _NavigatorHomeScreenState extends State<NavigatorHomeScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 16,
                   ),
                   MaterialButton(

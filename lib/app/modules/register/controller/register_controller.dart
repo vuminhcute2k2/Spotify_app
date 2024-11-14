@@ -25,7 +25,6 @@ void onRegister() async {
 
     // Lấy giá trị của biến error từ Auth controller
     String errorMessage = Auth().error.value;
-
     if (errorMessage.isEmpty) {
       // Đăng ký thành công,
       Get.toNamed(AppRouterName.NavigatorHome);

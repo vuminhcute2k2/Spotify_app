@@ -15,14 +15,6 @@ class _SplashScreenState extends State<SplashScreen> {
    
   @override
   void initState() {
-    // TODO: implement initState
-    // Future.delayed(Duration(seconds: 2), () {
-    //   // Navigator.pushReplacement(
-    //   //   context,
-    //   //   MaterialPageRoute(builder: (context) =>const GetStartedScreen()),
-    //   // );
-    //   Get.offAndToNamed(AppRouterName.Continue);
-    // });
     splashController.requestPermission();
     super.initState();
     
