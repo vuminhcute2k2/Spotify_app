@@ -8,13 +8,13 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
+import 'package:music_spotify_app/model/spotifyAPI.dart';
 
 class MusicPageScreen extends StatelessWidget {
   final Map<String, dynamic> songData;
+  final bool isSpotify;
 
-  MusicPageScreen({required this.songData});
-  // final MusicPageController musicPageController =
-  //     Get.put(MusicPageController());
+  MusicPageScreen({required this.songData, this.isSpotify = false});
   final MusicPageController musicPageController =
       Get.find<MusicPageController>();
 
@@ -97,22 +97,50 @@ class MusicPageScreen extends StatelessWidget {
 
                                 // Kiểm tra xem currentTag có phải là MediaItem không
                                 if (currentTag is MediaItem) {
-                                  // Hiển thị thông tin của bài hát hiện tại
-                                  return MediaMetaData(
-                                    imageUrl:
-                                        currentTag.artUri?.toString() ?? '',
-                                    title: currentTag.title ?? '',
-                                    artist: currentTag.artist ?? '',
-                                    musicSongs: currentTag.id ?? '',
-                                  );
+                                  if (isSpotify) {
+                                   return SpotifyMetaData(
+                                      imageUrl:
+                                          currentTag.artUri?.toString() ?? '',
+                                      title: currentTag.title ?? '',
+                                      artist: currentTag.artist ?? '',
+                                      musicSongs: currentTag.id ?? '',
+                                    );
+                                  } else {
+                                    return MediaMetaData(
+                                      imageUrl:
+                                          currentTag.artUri?.toString() ?? '',
+                                      title: currentTag.title ?? '',
+                                      artist: currentTag.artist ?? '',
+                                      musicSongs: currentTag.id ?? '',
+                                    );
+                                  }
                                 } else {
-                                  return const Text('Không có dữ liệu MediaItem.');
+                                  return const Text(
+                                      'Không có dữ liệu MediaItem.');
                                 }
                               } else {
-                                return const Text('Không có dữ liệu currentSource.');
+                                return const Text(
+                                    'Không có dữ liệu currentSource.');
                               }
                             },
                           ),
+                          if (songData != null)
+                            if (isSpotify)
+                              SpotifyMetaData(
+                                imageUrl: songData['image'],
+                                title: songData['name'],
+                                artist: songData['artists'],
+                                musicSongs: songData['uri'],
+                              )
+                            else
+                              MediaMetaData(
+                                imageUrl: songData['image'],
+                                title: songData['name'],
+                                artist: songData['artists'],
+                                musicSongs: songData['uri'],
+                              )
+                          else
+                            const Text('Không có dữ liệu bài hát.'),
                           StreamBuilder<PositionData>(
                             stream: musicPageController.positionDataStream,
                             builder: (context, snapshot) {
@@ -151,6 +179,94 @@ class MusicPageScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class SpotifyMetaData extends StatelessWidget {
+  final String imageUrl;
+  final String title;
+  final String artist;
+  final String musicSongs;
+
+  SpotifyMetaData({
+    required this.imageUrl,
+    required this.title,
+    required this.artist,
+    required this.musicSongs,
+  });
+
+  Map<String, dynamic> get songData => {
+        'imageUrl': imageUrl,
+        'title': title,
+        'artist': artist,
+        'musicSongs': musicSongs,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final MusicPageController favoriteController =
+        Get.put(MusicPageController());
+    final bool isFavorite = favoriteController.isFavorite(musicSongs);
+    return Column(
+      children: [
+        Container(
+          width: 350,
+          height: 400,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Text(
+                      artist,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              InkWell(
+                onTap: () {
+                  favoriteController.toggleFavorites(musicSongs, this.songData);
+                },
+                child: Obx(() {
+                  final isFavorite = favoriteController.isFavorite(musicSongs);
+                  return isFavorite
+                      ? const Icon(Icons.favorite, color: Colors.red)
+                      : const Icon(Icons.favorite_border, color: Colors.green);
+                }),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -227,12 +343,11 @@ class MediaMetaData extends StatelessWidget {
                 onTap: () {
                   favoriteController.toggleFavorites(musicSongs, this.songData);
                 },
-            
                 child: Obx(() {
                   final isFavorite = favoriteController.isFavorite(musicSongs);
                   return isFavorite
-                      ?const Icon(Icons.favorite, color: Colors.red)
-                      :const Icon(Icons.favorite_border, color: Colors.green);
+                      ? const Icon(Icons.favorite, color: Colors.red)
+                      : const Icon(Icons.favorite_border, color: Colors.green);
                 }),
               ),
 

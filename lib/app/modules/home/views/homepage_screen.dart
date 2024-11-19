@@ -312,8 +312,8 @@ class _HomePageScreenState extends State<HomePageScreen>
                     ),
                   ),
                 ),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.3,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.25,
                   child: TabBarView(
                     controller: tabviewController,
                     children: [

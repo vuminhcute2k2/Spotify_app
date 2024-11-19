@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:music_spotify_app/app/modules/home/controller/home_controller.dart';
+import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
 import 'package:music_spotify_app/generated/image_constants.dart';
 
 class AlbumListSongsScreen extends StatelessWidget {
@@ -13,7 +14,7 @@ class AlbumListSongsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     final HomeController homeController = Get.find<HomeController>();
-
+    final MusicPageController musicPageController = Get.find<MusicPageController>();
     // Lấy các bài hát của album sau khi nhận được thông tin album
     homeController.fetchAlbumTracks(album['id']);
 
@@ -148,7 +149,10 @@ class AlbumListSongsScreen extends StatelessWidget {
                             style: const TextStyle(color: Colors.grey),
                           ),
                           onTap: () {
-                            // Xử lý khi chọn bài hát, ví dụ phát nhạc
+                            MusicPageController musicPageController = Get.put(MusicPageController());
+                            print(track);
+                            musicPageController.onSongSelected(track);
+                            print("ấn ấn ấn");
                           },
                         );
                       },
