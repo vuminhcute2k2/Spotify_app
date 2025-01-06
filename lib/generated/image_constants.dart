@@ -204,7 +204,7 @@ class ImageConstant {
   static String imageNotFound = 'assets/images/image_not_found.png';
   static String back='$imagePath/back.png';
   static String imgApple='$imagePath/img_apple.svg';
-  static String imgSpotify='$imagePath/Spotify.png';
+  static String imgFeelTunes='$imagePath/icons_feelTunes.png';
   static String imgIcPlayTopHits='$imagePath/image_icPlayTopHits.svg';
   static String imgVuesaxDirectbox='$imagePath/directbox-send.svg';
 

@@ -71,7 +71,7 @@ class _NavigatorHomeScreenState extends State<NavigatorHomeScreen> {
         ),
         child: FloatingActionButton(
           backgroundColor: Colors.black,
-          child: Image.asset(ImageConstant.imgSpotify),
+          child: Image.asset(ImageConstant.imgFeelTunes),
           onPressed: () {
             Get.defaultDialog(
               backgroundColor: Colors.black.withOpacity(0),
@@ -173,7 +173,7 @@ class _NavigatorHomeScreenState extends State<NavigatorHomeScreen> {
                     minWidth: 40,
                     onPressed: () {
                       setState(() {
-                        currentScreen = const HistoryScreen();
+                        currentScreen = HistoryScreen();
                         currentTab = 2;
                       });
                     },

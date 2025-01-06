@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Center(
-          child: Image.asset('assets/images/img_spotify_logo_rgb_green.png',width: 266,height: 80,),
+          child: Image.asset('assets/images/logo_feelTunes.jpg',width: 566,height: 300,),
         ),
       ),
     );

@@ -21,7 +21,7 @@ class MusicPageScreen extends StatelessWidget {
   //     Get.put(MusicPageController());
   final MusicPageController musicPageController =
       Get.find<MusicPageController>();
-
+  
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<MusicPageController>();

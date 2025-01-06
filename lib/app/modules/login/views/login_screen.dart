@@ -72,7 +72,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   margin: const EdgeInsets.only(bottom: 50),
                   child: Center(
                       child: Image.asset(
-                    'assets/images/img_spotify_logo_rgb_green.png',
+                    'assets/images/logo_feelTunes_removebg.png',
                     width: 133,
                     height: 40,
                   )),

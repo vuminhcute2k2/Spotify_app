@@ -22,7 +22,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const SizedBox(height: 150,),
-                Center(child: Image.asset('assets/images/img_spotify_logo_rgb_green.png',width: 133,height: 40,)),
+                Center(child: Image.asset('assets/images/logo_feelTunes_removebg.png',width: 133,height: 40,)),
                 Stack(
                   alignment: Alignment.center,
                   children: [
@@ -33,7 +33,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                       // Sử dụng BoxDecoration để đặt background image
                       decoration:const BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('assets/images/background_spotify.png'),
+                          image: AssetImage('assets/images/logo_feelTunes_removebg.png'),
                           fit: BoxFit.cover,
                         ),
                       ),

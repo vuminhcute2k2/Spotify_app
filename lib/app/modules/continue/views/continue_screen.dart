@@ -54,8 +54,8 @@ class _ContinueScreenState extends State<ContinueScreen> {
               // ),
               Center(
                   child: Image.asset(
-                'assets/images/img_spotify_logo_rgb_green.png',
-                width: 133,
+                'assets/images/logo_feelTunes_removebg.png',
+                width: 180,
                 height: 40,
               )),
               Stack(

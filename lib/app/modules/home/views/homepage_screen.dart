@@ -1,10 +1,14 @@
-
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:music_spotify_app/app/modules/album/views/listAlbum_song.dart';
+import 'package:music_spotify_app/app/modules/home/tabbar/views/album_screen.dart';
+import 'package:http/http.dart' as http;
 import 'package:music_spotify_app/app/modules/musicpage/controller/musicpage_controller.dart';
 import 'package:music_spotify_app/app/modules/musicpage/view/musicpage_screen.dart';
 import 'package:music_spotify_app/app/modules/searchbar/views/search_screen.dart';
@@ -25,8 +29,7 @@ class _HomePageScreenState extends State<HomePageScreen>
     with TickerProviderStateMixin {
   final HomeController homeController = Get.put(HomeController());
 
-  final MusicPageController musicController =
-      Get.put(MusicPageController());
+  final MusicPageController musicController = Get.put(MusicPageController());
   late TabController tabviewController;
 
   @override
@@ -35,6 +38,94 @@ class _HomePageScreenState extends State<HomePageScreen>
     tabviewController = TabController(length: 4, vsync: this);
     homeController.fetchCarouselImages();
     homeController.fetchSongs();
+    // Gọi hàm hiển thị popup khi trang được tạo
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showMoodDialog(context);
+    });
+  }
+
+  // Hàm để hiển thị popup cho người dùng nhập tâm trạng
+  void _showMoodDialog(BuildContext context) {
+    TextEditingController moodController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Enter your mood"),
+          content: TextField(
+            controller: moodController,
+            decoration: InputDecoration(hintText: "Enter your mood here"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _analyzeMood(
+                    moodController.text); // Phân tích tâm trạng người dùng
+              },
+              child: Text("Analyze"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Hàm phân tích tâm trạng và gửi dữ liệu tới API
+  void _analyzeMood(String moodText) async {
+    try {
+      // In ra body yêu cầu để kiểm tra định dạng
+      print('Request Body: ${jsonEncode({'text': moodText})}');
+      print('Request Headers: { "Content-Type": "application/json" }');
+
+      var response = await http.post(
+        Uri.parse(
+            "https://d270-27-79-153-197.ngrok-free.app/recommend_albums"),
+        headers: {
+          'Content-Type': 'application/json', // Đảm bảo đúng Content-Type
+        },
+        body:
+            jsonEncode({'mood': moodText}), // Đảm bảo body đúng định dạng JSON
+      );
+
+      // Kiểm tra nếu status code của response là 200 (thành công)
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        final List<dynamic>? recommendedAlbums = data['recommended_albums'];
+
+        // Gọi controller để cập nhật danh sách album theo tâm trạng
+        if (recommendedAlbums != null && recommendedAlbums.isNotEmpty) {
+          homeController.moodAlbums.clear();
+          final List<dynamic>? recommendedAlbums = data['recommended_albums'];
+          homeController.moodAlbums.assignAll(recommendedAlbums
+                  ?.map((album) => Map<String, dynamic>.from(album)) ??
+              []);
+          print('No albums found.');
+        } else {
+          // Xử lý nếu danh sách tồn tại
+          for (var album in recommendedAlbums!) {
+            print("danh sách album mood : $album");
+          }
+        }
+      } else {
+        _showError("Failed to process mood: ${response.body}");
+      }
+    } catch (e) {
+      _showError("Error: $e");
+    }
+  }
+
+// Hàm hiển thị lỗi bằng snackbar
+  void _showError(String message) {
+    Get.snackbar(
+      "Error",
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+    print("error : $message");
   }
 
   @override
@@ -53,8 +144,8 @@ class _HomePageScreenState extends State<HomePageScreen>
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.to(() =>  SearchScreen(),
-                          transition: Transition.downToUp);
+                        Get.to(() => SearchScreen(),
+                            transition: Transition.downToUp);
                       },
                       child: const Icon(
                         Icons.search,
@@ -65,7 +156,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                     Container(
                       child: Center(
                         child: Image.asset(
-                          'assets/images/img_spotify_logo_rgb_green.png',
+                          'assets/images/logo_feelTunes_removebg.png',
                           width: 133,
                           height: 40,
                         ),
@@ -109,8 +200,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                               autoPlay: true,
                               enlargeCenterPage: true,
                               viewportFraction: 0.8,
-                              enlargeStrategy:
-                                  CenterPageEnlargeStrategy.height,
+                              enlargeStrategy: CenterPageEnlargeStrategy.height,
                               onPageChanged: (val, _) {
                                 homeController.changeDotPosition(val);
                               },
@@ -189,8 +279,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                         child: Column(
                           children: [
                             Container(
-                              margin:
-                                  const EdgeInsets.only(right: 10, left: 2),
+                              margin: const EdgeInsets.only(right: 10, left: 2),
                               child: Stack(
                                 children: [
                                   GestureDetector(
@@ -200,13 +289,11 @@ class _HomePageScreenState extends State<HomePageScreen>
                                     child: Container(
                                       width: MediaQuery.of(context).size.width *
                                           0.3,
-                                      height: MediaQuery.of(context)
-                                              .size
-                                              .height *
-                                          0.15,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.15,
                                       decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(16),
@@ -250,6 +337,102 @@ class _HomePageScreenState extends State<HomePageScreen>
                         ),
                       );
                     },
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Mood Albums for U",
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.065,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.22,
+                  child: Obx(
+                    () => ListView.builder(
+                      itemCount: homeController.moodAlbums.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (_, index) {
+                        final album = homeController.moodAlbums[index];
+                        return Container(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: Column(
+                            children: [
+                              Container(
+                                margin:
+                                    const EdgeInsets.only(right: 10, left: 2),
+                                child: Stack(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        // Thực hiện các hành động khi người dùng chọn album
+                                        Get.to(
+                                          () => AlbumListSongsScreen(
+                                            albumId: album[
+                                                'id'], // Truyền ID của album
+                                            albumName: album[
+                                                'name'], // Truyền tên của album
+                                            albumImageUrl: album[
+                                                'image'], // Truyền URL ảnh của album
+                                            artistName: album[
+                                                'artist_name'], // Truyền tên nghệ sĩ
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.15,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                          child: Image.network(
+                                            album[
+                                                'image'], // Hiển thị hình ảnh từ URL album
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                album['name'], // Hiển thị tên album
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                album['artist_name'], // Hiển thị tên nghệ sĩ
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
                 Container(
@@ -320,12 +503,13 @@ class _HomePageScreenState extends State<HomePageScreen>
                     controller: tabviewController,
                     children: [
                       ItemArtist(context),
-                      const Center(
-                        child: Text(
-                          "It's Album",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                      // const Center(
+                      //   child: Text(
+                      //     "It's Album",
+                      //     style: TextStyle(color: Colors.white),
+                      //   ),
+                      // ),
+                      ItemAlbum(context),
                       const Center(
                         child: Text(
                           "It's Podcast",

@@ -1,0 +1,4 @@
+enum MusicSource {
+  firebase,
+  jamendo,
+}
